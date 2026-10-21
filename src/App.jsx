@@ -678,8 +678,6 @@ function HomePage() {
     });
   }, [products, search, category]);
 
-  const saleProducts = products.filter(isProductOnSale);
-
   return (
     <>
       {orderPlaced && (
@@ -924,6 +922,7 @@ function HomePage() {
         }
       `}</style>
 
+      {/* HERO SLIDER */}
       <section className="vb-slider" aria-label="Featured products">
         <div
           className="vb-slide-bg"
@@ -1018,6 +1017,7 @@ function HomePage() {
         </div>
       </section>
 
+      {/* FLOATING CONTACT BUTTONS */}
       <div className="vb-float-contact" aria-label="Contact VoltBridge">
         <a
           className="vb-float-wa"
@@ -1042,59 +1042,7 @@ function HomePage() {
         </a>
       </div>
 
-      <section className="benefits-section" id="about">
-        <div className="container benefits-grid">
-          <article>
-            <ShieldCheck size={26} />
-            <div>
-              <h3>Quality accessories</h3>
-              <p>Products selected for everyday use.</p>
-            </div>
-          </article>
-
-          <article>
-            <Truck size={26} />
-            <div>
-              <h3>Delivery available</h3>
-              <p>Nairobi delivery and countrywide shipping.</p>
-            </div>
-          </article>
-
-          <article>
-            <WhatsAppIcon size={26} />
-            <div>
-              <h3>Easy enquiries</h3>
-              <p>Contact us directly through WhatsApp.</p>
-            </div>
-          </article>
-
-          <article>
-            <RefreshCw size={26} />
-            <div>
-              <h3>Availability updates</h3>
-              <p>Check whether a product is available before ordering.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      {saleProducts.length > 0 && (
-        <section className="container sale-section">
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow">SPECIAL OFFERS</span>
-              <h2>Products on sale</h2>
-            </div>
-          </div>
-
-          <div className="product-grid">
-            {saleProducts.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
-
+      {/* PRODUCTS SECTION */}
       <section className="container products-section" id="products">
         <div className="section-heading">
           <div>
@@ -1122,7 +1070,9 @@ function HomePage() {
               onChange={(event) => setCategory(event.target.value)}
             >
               {CATEGORIES.map((item) => (
-                <option key={item} value={item}>{item}</option>
+                <option key={item} value={item}>
+                  {item}
+                </option>
               ))}
             </select>
           </label>
@@ -1157,6 +1107,43 @@ function HomePage() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* BENEFITS SECTION — AFTER ALL PRODUCTS */}
+      <section className="benefits-section" id="about">
+        <div className="container benefits-grid">
+          <article>
+            <ShieldCheck size={26} />
+            <div>
+              <h3>Quality accessories</h3>
+              <p>Products selected for everyday use.</p>
+            </div>
+          </article>
+
+          <article>
+            <Truck size={26} />
+            <div>
+              <h3>Delivery available</h3>
+              <p>Nairobi delivery and countrywide shipping.</p>
+            </div>
+          </article>
+
+          <article>
+            <WhatsAppIcon size={26} />
+            <div>
+              <h3>Easy enquiries</h3>
+              <p>Contact us directly through WhatsApp.</p>
+            </div>
+          </article>
+
+          <article>
+            <RefreshCw size={26} />
+            <div>
+              <h3>Availability updates</h3>
+              <p>Check whether a product is available before ordering.</p>
+            </div>
+          </article>
+        </div>
       </section>
     </>
   );
@@ -1240,7 +1227,9 @@ function ProductDetailPage() {
       <div className="container page-state">
         <h2>Product unavailable</h2>
         <p>{error || "This product could not be found."}</p>
-        <Link to="/" className="button button-primary">Return to shop</Link>
+        <Link to="/" className="button button-primary">
+          Return to shop
+        </Link>
       </div>
     );
   }
@@ -1341,7 +1330,9 @@ function CartPage() {
           <ShoppingCart size={35} />
           <h2>Your cart is empty</h2>
           <p>Explore our store and add products to your cart.</p>
-          <Link to="/" className="button button-primary">Continue shopping</Link>
+          <Link to="/" className="button button-primary">
+            Continue shopping
+          </Link>
         </div>
       ) : (
         <div className="cart-layout">
@@ -1426,7 +1417,9 @@ function CartPage() {
               Proceed to checkout <ArrowRight size={17} />
             </button>
 
-            <Link to="/" className="continue-shopping">Continue shopping</Link>
+            <Link to="/" className="continue-shopping">
+              Continue shopping
+            </Link>
           </aside>
         </div>
       )}
@@ -1466,7 +1459,9 @@ function CheckoutPage() {
     }
 
     if (cartItems.some((item) => !isAvailable(item))) {
-      setError("One or more products are unavailable. Please update your cart.");
+      setError(
+        "One or more products are unavailable. Please update your cart."
+      );
       return;
     }
 
@@ -1556,7 +1551,9 @@ function CheckoutPage() {
       <section className="container page-state">
         <ShoppingCart size={35} />
         <h2>Your cart is empty</h2>
-        <Link to="/" className="button button-primary">Return to shop</Link>
+        <Link to="/" className="button button-primary">
+          Return to shop
+        </Link>
       </section>
     );
   }
@@ -1641,12 +1638,16 @@ function CheckoutPage() {
             />
           </label>
 
-          {error && <p className="form-error" role="alert">{error}</p>}
+          {error && (
+            <p className="form-error" role="alert">{error}</p>
+          )}
 
           <button
             type="submit"
             className="button button-primary full-width"
-            disabled={submitting || cartItems.some((item) => !isAvailable(item))}
+            disabled={
+              submitting || cartItems.some((item) => !isAvailable(item))
+            }
           >
             {submitting ? "Placing order..." : "Place order"}
             {!submitting && <ArrowRight size={17} />}
@@ -1671,7 +1672,9 @@ function CheckoutPage() {
                 <Availability product={item} />
               </div>
 
-              <strong>{money(getProductPrice(item) * item.quantity)}</strong>
+              <strong>
+                {money(getProductPrice(item) * item.quantity)}
+              </strong>
             </div>
           ))}
 
@@ -1742,14 +1745,45 @@ function AppRoutes() {
         }
       />
 
-      <Route path="/about" element={<PageLayout><About /></PageLayout>} />
-      <Route path="/contact" element={<PageLayout><Contact /></PageLayout>} />
-      <Route path="/service-center" element={<PageLayout><ServiceCenter /></PageLayout>} />
-      <Route path="/privacy-policy" element={<PageLayout><PrivacyPolicy /></PageLayout>} />
-      <Route path="/extended-warranty" element={<PageLayout><ExtendedWarranty /></PageLayout>} />
-      <Route path="/terms-and-conditions" element={<PageLayout><TermsAndConditions /></PageLayout>} />
-      <Route path="/shipping-and-return-policy" element={<PageLayout><ShippingReturns /></PageLayout>} />
-      <Route path="/faqs" element={<PageLayout><FAQs /></PageLayout>} />
+      <Route
+        path="/about"
+        element={<PageLayout><About /></PageLayout>}
+      />
+
+      <Route
+        path="/contact"
+        element={<PageLayout><Contact /></PageLayout>}
+      />
+
+      <Route
+        path="/service-center"
+        element={<PageLayout><ServiceCenter /></PageLayout>}
+      />
+
+      <Route
+        path="/privacy-policy"
+        element={<PageLayout><PrivacyPolicy /></PageLayout>}
+      />
+
+      <Route
+        path="/extended-warranty"
+        element={<PageLayout><ExtendedWarranty /></PageLayout>}
+      />
+
+      <Route
+        path="/terms-and-conditions"
+        element={<PageLayout><TermsAndConditions /></PageLayout>}
+      />
+
+      <Route
+        path="/shipping-and-return-policy"
+        element={<PageLayout><ShippingReturns /></PageLayout>}
+      />
+
+      <Route
+        path="/faqs"
+        element={<PageLayout><FAQs /></PageLayout>}
+      />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

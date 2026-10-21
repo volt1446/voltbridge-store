@@ -2550,3 +2550,8 @@ Warm ivory and champagne gold theme
     gap: 12px;
   }
 }
+
+/* Move the homepage benefits section lower */
+.benefits-section {
+  margin-top: 70px;
+}
