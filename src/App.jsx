@@ -53,10 +53,10 @@ const PHONE_NUMBER = "+254726147462";
 const SITE_URL = "https://voltbridgetechnologies.com";
 
 const HOME_TITLE =
-  "Phone Accessories in Nairobi, Kenya | VoltBridge Technologies";
+  "Samsung Chargers & Apple Accessories in Kenya | VoltBridge";
 
 const HOME_DESCRIPTION =
-  "Shop phone accessories in Nairobi, Kenya, at VoltBridge Technologies. Explore chargers, cables, phone cases, power banks, earbuds and more. Retail and wholesale enquiries welcome.";
+  "Shop Samsung chargers, Apple power adapters and cables at VoltBridge Technologies. Retail and wholesale in Nairobi, with shipping across Kenya. Order online or via WhatsApp.";
 
 const CATEGORIES = [
   "All",
@@ -229,15 +229,19 @@ function updateProductMetadata(product) {
   const name = String(product.name || "Phone Accessory").trim();
 
   const title =
-    `${name} in Nairobi, Kenya | VoltBridge Technologies`;
+    `${name} | Buy in Kenya | VoltBridge Technologies`;
 
-  const description = String(
+  const productDescription = String(
     product.description ||
-      `Shop ${name} at VoltBridge Technologies in Nairobi, Kenya.`
+      `Shop ${name} at VoltBridge Technologies in Nairobi, Kenya. Retail and wholesale enquiries welcome.`
   )
     .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 155);
+    .trim();
+
+  const description =
+    productDescription.length > 155
+      ? `${productDescription.slice(0, 152).trimEnd()}...`
+      : productDescription;
 
   document.title = title;
 
@@ -285,7 +289,7 @@ function updateProductStructuredData(product) {
     name: product.name,
     description:
       product.description ||
-      `Shop ${product.name} at VoltBridge Technologies in Nairobi.`,
+      `Shop ${product.name} at VoltBridge Technologies in Nairobi, Kenya.`,
     url,
     brand: {
       "@type": "Brand",
@@ -1738,45 +1742,14 @@ function AppRoutes() {
         }
       />
 
-      <Route
-        path="/about"
-        element={<PageLayout><About /></PageLayout>}
-      />
-
-      <Route
-        path="/contact"
-        element={<PageLayout><Contact /></PageLayout>}
-      />
-
-      <Route
-        path="/service-center"
-        element={<PageLayout><ServiceCenter /></PageLayout>}
-      />
-
-      <Route
-        path="/privacy-policy"
-        element={<PageLayout><PrivacyPolicy /></PageLayout>}
-      />
-
-      <Route
-        path="/extended-warranty"
-        element={<PageLayout><ExtendedWarranty /></PageLayout>}
-      />
-
-      <Route
-        path="/terms-and-conditions"
-        element={<PageLayout><TermsAndConditions /></PageLayout>}
-      />
-
-      <Route
-        path="/shipping-and-return-policy"
-        element={<PageLayout><ShippingReturns /></PageLayout>}
-      />
-
-      <Route
-        path="/faqs"
-        element={<PageLayout><FAQs /></PageLayout>}
-      />
+      <Route path="/about" element={<PageLayout><About /></PageLayout>} />
+      <Route path="/contact" element={<PageLayout><Contact /></PageLayout>} />
+      <Route path="/service-center" element={<PageLayout><ServiceCenter /></PageLayout>} />
+      <Route path="/privacy-policy" element={<PageLayout><PrivacyPolicy /></PageLayout>} />
+      <Route path="/extended-warranty" element={<PageLayout><ExtendedWarranty /></PageLayout>} />
+      <Route path="/terms-and-conditions" element={<PageLayout><TermsAndConditions /></PageLayout>} />
+      <Route path="/shipping-and-return-policy" element={<PageLayout><ShippingReturns /></PageLayout>} />
+      <Route path="/faqs" element={<PageLayout><FAQs /></PageLayout>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
