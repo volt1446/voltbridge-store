@@ -2519,3 +2519,34 @@ Warm ivory and champagne gold theme
     width: 29px;
   }
 }
+
+/* Our Company footer links */
+.footer-company-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.footer-company-links a {
+  color: inherit;
+  text-decoration: none;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.footer-company-links a:hover {
+  color: #f5c542;
+  text-decoration: underline;
+}
+
+.footer-content h3 {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+  .footer-company-links {
+    gap: 12px;
+  }
+}

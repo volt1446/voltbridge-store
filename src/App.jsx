@@ -1,3 +1,4 @@
+
 import {
   useCallback,
   useEffect,
@@ -35,6 +36,16 @@ import {
 import { supabase } from "./supabase";
 import { useCart } from "./CartContext";
 import Admin from "./Admin";
+
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import ServiceCenter from "./pages/ServiceCenter";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ExtendedWarranty from "./pages/ExtendedWarranty";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import ShippingReturns from "./pages/ShippingReturns";
+import FAQs from "./pages/FAQs";
+
 import "./App.css";
 
 const WHATSAPP_NUMBER = "254726147462";
@@ -326,7 +337,6 @@ function Availability({ product }) {
   );
 }
 
-
 function Header() {
   const { cartItems } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -353,21 +363,10 @@ function Header() {
         </Link>
 
         <nav className={`main-nav ${menuOpen ? "open" : ""}`}>
-          <Link to="/" onClick={closeMenu}>
-            Home
-          </Link>
-
-          <a href="/#products" onClick={closeMenu}>
-            Shop
-          </a>
-
-          <a href="/#about" onClick={closeMenu}>
-            About
-          </a>
-
-          <a href="/#contact" onClick={closeMenu}>
-            Contact
-          </a>
+          <Link to="/" onClick={closeMenu}>Home</Link>
+          <Link to="/#products" onClick={closeMenu}>Shop</Link>
+          <Link to="/about" onClick={closeMenu}>About</Link>
+          <Link to="/contact" onClick={closeMenu}>Contact</Link>
         </nav>
 
         <div className="header-actions">
@@ -385,43 +384,23 @@ function Header() {
           </Link>
 
           <a
-            href="https://wa.me/254726147462"
+            href={makeWhatsAppUrl("Hello VoltBridge Technologies. I need assistance.")}
             className="header-icon-link whatsapp-header-link"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat with VoltBridge on WhatsApp"
             title="WhatsApp us"
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M20.52 3.48A11.85 11.85 0 0 0 12.08 0C5.5 0 .15 5.35.15 11.93c0 2.1.55 4.16 1.6 5.97L.05 24l6.25-1.64a11.94 11.94 0 0 0 5.78 1.47h.01c6.58 0 11.93-5.35 11.93-11.93 0-3.19-1.24-6.19-3.5-8.42ZM12.09 21.8a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.84 9.84 0 0 1-1.51-5.26c0-5.45 4.44-9.89 9.89-9.89 2.64 0 5.12 1.03 6.98 2.89a9.82 9.82 0 0 1 2.9 7c0 5.44-4.44 9.87-9.9 9.87Zm5.43-7.4c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.38-.03-.53-.07-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51l-.58-.01c-.2 0-.53.07-.81.38-.28.3-1.06 1.03-1.06 2.5s1.09 2.9 1.24 3.1c.15.2 2.14 3.27 5.19 4.59.72.31 1.28.5 1.72.64.72.23 1.38.2 1.9.12.58-.09 1.77-.73 2.02-1.43.25-.7.25-1.3.17-1.43-.08-.13-.28-.2-.58-.35Z" />
-            </svg>
+            <WhatsAppIcon size={22} />
           </a>
 
           <a
-            href="tel:+254726147462"
+            href={`tel:${PHONE_NUMBER}`}
             className="header-icon-link"
             aria-label="Call VoltBridge"
             title="Call us"
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="21"
-              height="21"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.79a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.89.34 1.83.58 2.79.7A2 2 0 0 1 22 16.92Z" />
-            </svg>
+            <PhoneCall size={21} />
           </a>
 
           <button
@@ -439,8 +418,21 @@ function Header() {
   );
 }
 
-
 function Footer() {
+  const companyLinks = [
+    { label: "About Us", to: "/about" },
+    { label: "Contact Us", to: "/contact" },
+    { label: "Service Center", to: "/service-center" },
+    { label: "Privacy Policy", to: "/privacy-policy" },
+    { label: "Extended Warranty", to: "/extended-warranty" },
+    { label: "Terms and Conditions", to: "/terms-and-conditions" },
+    {
+      label: "Shipping and Return Policy",
+      to: "/shipping-and-return-policy",
+    },
+    { label: "FAQs", to: "/faqs" },
+  ];
+
   return (
     <footer className="site-footer" id="contact">
       <div className="container footer-content">
@@ -463,7 +455,18 @@ function Footer() {
         </div>
 
         <div>
-          <h3>Contact us</h3>
+          <h3>Our Company</h3>
+          <nav className="footer-company-links" aria-label="Our Company">
+            {companyLinks.map((item) => (
+              <Link key={item.to} to={item.to}>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div>
+          <h3>Contact Us</h3>
           <p>Bihi Tower, 4th Floor, Suite 5, Nairobi</p>
 
           <a
@@ -484,9 +487,12 @@ function Footer() {
         </div>
 
         <div>
-          <h3>Shopping with us</h3>
+          <h3>Shopping with Us</h3>
           <p>Retail and wholesale enquiries welcome.</p>
           <p>Nairobi delivery and countrywide shipping.</p>
+          <Link to="/#products">
+            Shop our products <ArrowRight size={15} />
+          </Link>
         </div>
       </div>
 
@@ -520,7 +526,6 @@ function ProductCard({ product }) {
               event.currentTarget.style.display = "none";
             }}
           />
-
           {onSale && <span className="sale-badge">SALE</span>}
         </div>
       </Link>
@@ -531,9 +536,7 @@ function ProductCard({ product }) {
         </span>
 
         <h3>
-          <Link to={`/product/${product.id}`}>
-            {product.name}
-          </Link>
+          <Link to={`/product/${product.id}`}>{product.name}</Link>
         </h3>
 
         <div className="product-price">
@@ -680,9 +683,7 @@ function HomePage() {
           <ShieldCheck size={35} />
           <h2>Order submitted successfully!</h2>
 
-          {orderNumber && (
-            <p>Your order reference is: {orderNumber}</p>
-          )}
+          {orderNumber && <p>Your order reference is: {orderNumber}</p>}
 
           <p>
             Your order is pending confirmation. Please follow the
@@ -692,9 +693,7 @@ function HomePage() {
           <button
             type="button"
             className="button button-primary"
-            onClick={() =>
-              navigate("/", { replace: true, state: null })
-            }
+            onClick={() => navigate("/", { replace: true, state: null })}
           >
             Continue shopping
           </button>
@@ -942,10 +941,7 @@ function HomePage() {
             )
           }
         >
-          <ChevronRight
-            size={22}
-            style={{ transform: "rotate(180deg)" }}
-          />
+          <ChevronRight size={22} style={{ transform: "rotate(180deg)" }} />
         </button>
 
         <div className="container vb-slide-inner">
@@ -978,22 +974,15 @@ function HomePage() {
                 WhatsApp us
               </a>
 
-              <a
-                href={`tel:${PHONE_NUMBER}`}
-                className="vb-call-button"
-              >
+              <a href={`tel:${PHONE_NUMBER}`} className="vb-call-button">
                 <PhoneCall size={18} />
                 Call us
               </a>
             </div>
 
             <div className="hero-trust">
-              <span>
-                <ShieldCheck size={18} /> Retail & wholesale
-              </span>
-              <span>
-                <Truck size={18} /> Delivery available
-              </span>
+              <span><ShieldCheck size={18} /> Retail & wholesale</span>
+              <span><Truck size={18} /> Delivery available</span>
             </div>
           </div>
         </div>
@@ -1003,9 +992,7 @@ function HomePage() {
           className="vb-slider-control vb-slider-next"
           aria-label="Next banner"
           onClick={() =>
-            setActiveSlide(
-              (current) => (current + 1) % heroSlides.length
-            )
+            setActiveSlide((current) => (current + 1) % heroSlides.length)
           }
         >
           <ChevronRight size={22} />
@@ -1131,9 +1118,7 @@ function HomePage() {
               onChange={(event) => setCategory(event.target.value)}
             >
               {CATEGORIES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
+                <option key={item} value={item}>{item}</option>
               ))}
             </select>
           </label>
@@ -1251,9 +1236,7 @@ function ProductDetailPage() {
       <div className="container page-state">
         <h2>Product unavailable</h2>
         <p>{error || "This product could not be found."}</p>
-        <Link to="/" className="button button-primary">
-          Return to shop
-        </Link>
+        <Link to="/" className="button button-primary">Return to shop</Link>
       </div>
     );
   }
@@ -1354,9 +1337,7 @@ function CartPage() {
           <ShoppingCart size={35} />
           <h2>Your cart is empty</h2>
           <p>Explore our store and add products to your cart.</p>
-          <Link to="/" className="button button-primary">
-            Continue shopping
-          </Link>
+          <Link to="/" className="button button-primary">Continue shopping</Link>
         </div>
       ) : (
         <div className="cart-layout">
@@ -1396,9 +1377,7 @@ function CartPage() {
                       <button
                         type="button"
                         aria-label="Increase quantity"
-                        disabled={
-                          !available || item.quantity >= quantityLimit
-                        }
+                        disabled={!available || item.quantity >= quantityLimit}
                         onClick={() => increaseQuantity(item.id)}
                       >
                         <Plus size={15} />
@@ -1443,9 +1422,7 @@ function CartPage() {
               Proceed to checkout <ArrowRight size={17} />
             </button>
 
-            <Link to="/" className="continue-shopping">
-              Continue shopping
-            </Link>
+            <Link to="/" className="continue-shopping">Continue shopping</Link>
           </aside>
         </div>
       )}
@@ -1472,10 +1449,7 @@ function CheckoutPage() {
   const [error, setError] = useState("");
 
   function update(field, value) {
-    setForm((current) => ({
-      ...current,
-      [field]: value,
-    }));
+    setForm((current) => ({ ...current, [field]: value }));
   }
 
   async function handleSubmit(event) {
@@ -1488,9 +1462,7 @@ function CheckoutPage() {
     }
 
     if (cartItems.some((item) => !isAvailable(item))) {
-      setError(
-        "One or more products are unavailable. Please update your cart."
-      );
+      setError("One or more products are unavailable. Please update your cart.");
       return;
     }
 
@@ -1563,10 +1535,7 @@ function CheckoutPage() {
 
       navigate("/", {
         replace: true,
-        state: {
-          orderPlaced: true,
-          orderNumber,
-        },
+        state: { orderPlaced: true, orderNumber },
       });
     } catch (err) {
       setError(
@@ -1583,9 +1552,7 @@ function CheckoutPage() {
       <section className="container page-state">
         <ShoppingCart size={35} />
         <h2>Your cart is empty</h2>
-        <Link to="/" className="button button-primary">
-          Return to shop
-        </Link>
+        <Link to="/" className="button button-primary">Return to shop</Link>
       </section>
     );
   }
@@ -1609,9 +1576,7 @@ function CheckoutPage() {
             <input
               type="text"
               value={form.customerName}
-              onChange={(event) =>
-                update("customerName", event.target.value)
-              }
+              onChange={(event) => update("customerName", event.target.value)}
               required
               maxLength={160}
             />
@@ -1652,9 +1617,7 @@ function CheckoutPage() {
             Payment method *
             <select
               value={form.paymentMethod}
-              onChange={(event) =>
-                update("paymentMethod", event.target.value)
-              }
+              onChange={(event) => update("paymentMethod", event.target.value)}
               required
             >
               <option value="M-Pesa">M-Pesa</option>
@@ -1674,18 +1637,12 @@ function CheckoutPage() {
             />
           </label>
 
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
+          {error && <p className="form-error" role="alert">{error}</p>}
 
           <button
             type="submit"
             className="button button-primary full-width"
-            disabled={
-              submitting || cartItems.some((item) => !isAvailable(item))
-            }
+            disabled={submitting || cartItems.some((item) => !isAvailable(item))}
           >
             {submitting ? "Placing order..." : "Place order"}
             {!submitting && <ArrowRight size={17} />}
@@ -1710,9 +1667,7 @@ function CheckoutPage() {
                 <Availability product={item} />
               </div>
 
-              <strong>
-                {money(getProductPrice(item) * item.quantity)}
-              </strong>
+              <strong>{money(getProductPrice(item) * item.quantity)}</strong>
             </div>
           ))}
 
@@ -1732,6 +1687,16 @@ function CheckoutPage() {
 
 /* ---------------- ROUTES ---------------- */
 
+function PageLayout({ children }) {
+  return (
+    <>
+      <Header />
+      {children}
+      <Footer />
+    </>
+  );
+}
+
 function AppRoutes() {
   return (
     <Routes>
@@ -1740,45 +1705,77 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          <>
-            <Header />
+          <PageLayout>
             <HomePage />
-            <Footer />
-          </>
+          </PageLayout>
         }
       />
 
       <Route
         path="/product/:productId"
         element={
-          <>
-            <Header />
+          <PageLayout>
             <ProductDetailPage />
-            <Footer />
-          </>
+          </PageLayout>
         }
       />
 
       <Route
         path="/cart"
         element={
-          <>
-            <Header />
+          <PageLayout>
             <CartPage />
-            <Footer />
-          </>
+          </PageLayout>
         }
       />
 
       <Route
         path="/checkout"
         element={
-          <>
-            <Header />
+          <PageLayout>
             <CheckoutPage />
-            <Footer />
-          </>
+          </PageLayout>
         }
+      />
+
+      <Route
+        path="/about"
+        element={<PageLayout><About /></PageLayout>}
+      />
+
+      <Route
+        path="/contact"
+        element={<PageLayout><Contact /></PageLayout>}
+      />
+
+      <Route
+        path="/service-center"
+        element={<PageLayout><ServiceCenter /></PageLayout>}
+      />
+
+      <Route
+        path="/privacy-policy"
+        element={<PageLayout><PrivacyPolicy /></PageLayout>}
+      />
+
+      <Route
+        path="/extended-warranty"
+        element={<PageLayout><ExtendedWarranty /></PageLayout>}
+      />
+
+      <Route
+        path="/terms-and-conditions"
+        element={<PageLayout><TermsAndConditions /></PageLayout>}
+      />
+
+      <Route
+        path="/shipping-and-return-policy"
+        element={<PageLayout><ShippingReturns /></PageLayout>}
+      />
+
+      <Route
+        path="/faqs"
+        element={<PageLayout><FAQs /></PageLayout>}
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />

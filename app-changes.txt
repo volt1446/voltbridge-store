@@ -1,0 +1,78 @@
+diff --git a/src/App.jsx b/src/App.jsx
+index ca7b4ba..a287f63 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -13,6 +13,7 @@ import {
+   Routes,
+   useNavigate,
+   useParams,
++  useLocation,
+ } from "react-router-dom";
+ 
+ import {
+@@ -324,6 +325,12 @@ function ProductCard({ product }) {
+ }
+ 
+ function HomePage() {
++  const navigate = useNavigate();
++  const location = useLocation();
++
++  const orderPlaced = location.state?.orderPlaced;
++  const orderNumber = location.state?.orderNumber;
++
+   const [products, setProducts] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState("");
+@@ -386,6 +393,33 @@ function HomePage() {
+ 
+   return (
+     <>
++      {orderPlaced && (
++        <section className="container page-state" role="status">
++          <ShieldCheck size={35} />
++          <h2>Order submitted successfully!</h2>
++
++          {orderNumber && (
++            <p>Your order reference is: {orderNumber}</p>
++          )}
++
++          <p>
++            Your order is pending confirmation. Payment has not been
++            verified by this website. Please follow the instructions
++            provided by VoltBridge Technologies.
++          </p>
++
++          <button
++            type="button"
++            className="button button-primary"
++            onClick={() => {
++              navigate("/", { replace: true, state: null });
++            }}
++          >
++            Continue shopping
++          </button>
++        </section>
++      )}
++
+       <section className="hero">
+         <div className="container hero-content">
+           <div className="hero-copy">
+@@ -562,6 +596,7 @@ function HomePage() {
+ function ProductDetailPage() {
+   const { productId } = useParams();
+   const { addToCart } = useCart();
++
+   const [product, setProduct] = useState(null);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState("");
+@@ -913,7 +948,9 @@ function CheckoutPage() {
+             )}`
+         ),
+         "",
+-        `Order subtotal: ${money(cartTotal)}`,
++        `Order subtotal: ${money(
++          Number(data?.subtotal ?? cartTotal)
++        )}`,
+         form.notes.trim() ? `Notes: ${form.notes.trim()}` : "",
+       ]
+         .filter(Boolean)
