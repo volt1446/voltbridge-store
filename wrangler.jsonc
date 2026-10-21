@@ -1,0 +1,17 @@
+
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "volt-bridge",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-16",
+  "vars": {
+    "SUPABASE_URL": "https://nljehgymahdfnqnhgtyb.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_365mr0RATA17guLQ6xFlWg_P4HaFrez"},
+  "assets": {
+  "directory": "./dist",
+  "binding": "ASSETS",
+  "run_worker_first": ["/sitemap.xml"],
+  "not_found_handling": "single-page-application"
+}
+  }
+
