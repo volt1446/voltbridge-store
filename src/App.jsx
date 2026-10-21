@@ -1,4 +1,3 @@
-
 import {
   useCallback,
   useEffect,
@@ -28,7 +27,7 @@ import {
   Package,
   ShieldCheck,
   Truck,
-  MessageCircle,
+  PhoneCall,
   RefreshCw,
   ChevronRight,
 } from "lucide-react";
@@ -39,6 +38,7 @@ import Admin from "./Admin";
 import "./App.css";
 
 const WHATSAPP_NUMBER = "254726147462";
+const PHONE_NUMBER = "+254726147462";
 const SITE_URL = "https://voltbridgetechnologies.com";
 
 const HOME_TITLE =
@@ -46,12 +46,6 @@ const HOME_TITLE =
 
 const HOME_DESCRIPTION =
   "Shop phone accessories in Nairobi, Kenya, at VoltBridge Technologies. Explore chargers, cables, phone cases, power banks, earbuds and more. Retail and wholesale enquiries welcome.";
-
-const HOME_OG_DESCRIPTION =
-  "Explore phone chargers, cables, cases, power banks and more at VoltBridge Technologies in Nairobi. Retail and wholesale enquiries welcome.";
-
-const HOME_TWITTER_DESCRIPTION =
-  "Shop phone accessories in Nairobi, Kenya. Explore chargers, cables, phone cases, power banks and more.";
 
 const CATEGORIES = [
   "All",
@@ -154,9 +148,24 @@ function makeWhatsAppUrl(message) {
   )}`;
 }
 
-/**
- * Update or create a meta tag.
- */
+function WhatsAppIcon({ size = 20 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      aria-label="WhatsApp"
+      role="img"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16.04 2.67A13.26 13.26 0 0 0 4.68 22.78L2.8 29.33l6.72-1.76a13.28 13.28 0 1 0 6.52-24.9Zm0 24.13a10.9 10.9 0 0 1-5.56-1.52l-.4-.24-3.99 1.04 1.06-3.88-.26-.4a10.88 10.88 0 1 1 9.15 5Zm5.98-8.16c-.33-.17-1.95-.96-2.25-1.07-.3-.11-.52-.17-.74.17-.22.33-.85 1.07-1.04 1.29-.19.22-.39.25-.72.08-.33-.17-1.39-.51-2.65-1.63-.98-.87-1.64-1.95-1.83-2.28-.19-.33-.02-.51.15-.68.15-.15.33-.39.5-.58.17-.19.22-.33.33-.55.11-.22.06-.41-.03-.58-.08-.17-.74-1.79-1.01-2.45-.27-.64-.54-.55-.74-.56l-.63-.01c-.22 0-.58.08-.88.41-.3.33-1.15 1.12-1.15 2.73s1.18 3.17 1.34 3.39c.17.22 2.32 3.54 5.62 4.96.79.34 1.4.54 1.88.69.79.25 1.5.21 2.06.13.63-.09 1.95-.8 2.23-1.57.27-.77.27-1.43.19-1.57-.08-.14-.3-.22-.63-.39Z" />
+    </svg>
+  );
+}
+
+/* ---------------- SEO HELPERS ---------------- */
+
 function setMeta(attribute, key, content) {
   let element = document.head.querySelector(
     `meta[${attribute}="${key}"]`
@@ -171,9 +180,6 @@ function setMeta(attribute, key, content) {
   element.setAttribute("content", content);
 }
 
-/**
- * Update the canonical URL.
- */
 function setCanonical(url) {
   let canonical = document.head.querySelector(
     'link[rel="canonical"]'
@@ -181,16 +187,13 @@ function setCanonical(url) {
 
   if (!canonical) {
     canonical = document.createElement("link");
-    canonical.setAttribute("rel", "canonical");
+    canonical.rel = "canonical";
     document.head.appendChild(canonical);
   }
 
-  canonical.setAttribute("href", url);
+  canonical.href = url;
 }
 
-/**
- * Restore the default site metadata.
- */
 function restoreHomeMetadata() {
   document.title = HOME_TITLE;
 
@@ -200,42 +203,30 @@ function restoreHomeMetadata() {
   setMeta("property", "og:type", "website");
   setMeta("property", "og:site_name", "VoltBridge Technologies");
   setMeta("property", "og:title", HOME_TITLE);
-  setMeta("property", "og:description", HOME_OG_DESCRIPTION);
+  setMeta("property", "og:description", HOME_DESCRIPTION);
   setMeta("property", "og:url", `${SITE_URL}/`);
 
   setMeta("name", "twitter:card", "summary");
   setMeta("name", "twitter:title", HOME_TITLE);
-  setMeta(
-    "name",
-    "twitter:description",
-    HOME_TWITTER_DESCRIPTION
-  );
+  setMeta("name", "twitter:description", HOME_DESCRIPTION);
 
   setCanonical(`${SITE_URL}/`);
 }
 
-/**
- * Update the SEO metadata for an individual product.
- */
 function updateProductMetadata(product) {
-  const productUrl = `${SITE_URL}/product/${product.id}`;
-  const productName = String(
-    product.name || "Phone Accessory"
-  ).trim();
+  const url = `${SITE_URL}/product/${product.id}`;
+  const name = String(product.name || "Phone Accessory").trim();
 
   const title =
-    `${productName} in Nairobi, Kenya | VoltBridge Technologies`;
+    `${name} in Nairobi, Kenya | VoltBridge Technologies`;
 
-  const descriptionSource =
+  const description = String(
     product.description ||
-    `Shop ${productName} at VoltBridge Technologies in Nairobi, Kenya. Contact us for product availability and orders.`;
-
-  const description = String(descriptionSource)
+      `Shop ${name} at VoltBridge Technologies in Nairobi, Kenya.`
+  )
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 155);
-
-  const imageUrl = getAbsoluteImageUrl(product);
 
   document.title = title;
 
@@ -246,68 +237,56 @@ function updateProductMetadata(product) {
   setMeta("property", "og:site_name", "VoltBridge Technologies");
   setMeta("property", "og:title", title);
   setMeta("property", "og:description", description);
-  setMeta("property", "og:url", productUrl);
+  setMeta("property", "og:url", url);
 
-  if (imageUrl) {
-    setMeta("property", "og:image", imageUrl);
-    setMeta("name", "twitter:image", imageUrl);
+  const image = getAbsoluteImageUrl(product);
+
+  if (image) {
+    setMeta("property", "og:image", image);
+    setMeta("name", "twitter:image", image);
   }
 
   setMeta("name", "twitter:card", "summary_large_image");
   setMeta("name", "twitter:title", title);
   setMeta("name", "twitter:description", description);
 
-  setCanonical(productUrl);
+  setCanonical(url);
 }
 
-/**
- * Create or update Product JSON-LD structured data.
- *
- * The schema uses the actual product data loaded from Supabase.
- * Price reflects the active sale price when one exists.
- * Availability uses the same logic as the storefront.
- */
+function removeProductStructuredData() {
+  document.getElementById("product-jsonld")?.remove();
+}
+
 function updateProductStructuredData(product) {
   if (!product?.id || !product?.name) {
     removeProductStructuredData();
     return;
   }
 
-  const productUrl = `${SITE_URL}/product/${product.id}`;
-  const imageUrl = getAbsoluteImageUrl(product);
+  const url = `${SITE_URL}/product/${product.id}`;
+  const image = getAbsoluteImageUrl(product);
   const price = getProductPrice(product);
-  const available = isAvailable(product);
 
-  const description = String(
-    product.description ||
-      `Shop ${product.name} at VoltBridge Technologies in Nairobi, Kenya.`
-  )
-    .replace(/\s+/g, " ")
-    .trim();
-
-  const structuredData = {
+  const schema = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "@id": `${productUrl}#product`,
-    name: String(product.name).trim(),
-    description,
-    url: productUrl,
+    "@id": `${url}#product`,
+    name: product.name,
+    description:
+      product.description ||
+      `Shop ${product.name} at VoltBridge Technologies in Nairobi.`,
+    url,
     brand: {
       "@type": "Brand",
       name: "VoltBridge Technologies",
     },
-    ...(product.category
-      ? { category: String(product.category) }
-      : {}),
-    ...(imageUrl ? { image: [imageUrl] } : {}),
+    ...(image ? { image: [image] } : {}),
     offers: {
       "@type": "Offer",
-      url: productUrl,
+      url,
       priceCurrency: "KES",
-      ...(Number.isFinite(price) && price >= 0
-        ? { price: price.toFixed(2) }
-        : {}),
-      availability: available
+      price: price.toFixed(2),
+      availability: isAvailable(product)
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
@@ -328,15 +307,10 @@ function updateProductStructuredData(product) {
     document.head.appendChild(script);
   }
 
-  script.textContent = JSON.stringify(structuredData);
+  script.textContent = JSON.stringify(schema);
 }
 
-/**
- * Remove product JSON-LD when leaving the product page.
- */
-function removeProductStructuredData() {
-  document.getElementById("product-jsonld")?.remove();
-}
+/* ---------------- SHARED COMPONENTS ---------------- */
 
 function Availability({ product }) {
   const available = isAvailable(product);
@@ -346,14 +320,12 @@ function Availability({ product }) {
       className={`availability ${
         available ? "available" : "unavailable"
       }`}
-      aria-label={`Product availability: ${
-        available ? "Available" : "Out of stock"
-      }`}
     >
-      {available ? "Available" : "Out of stock"}
+      {available ? "In Stock" : "Out of Stock"}
     </span>
   );
 }
+
 
 function Header() {
   const { cartItems } = useCart();
@@ -364,65 +336,109 @@ function Header() {
     0
   );
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Link
-          to="/"
-          className="brand"
-          onClick={() => setMenuOpen(false)}
-        >
+        <Link to="/" className="brand" onClick={closeMenu}>
           <span className="brand-icon">
             <Package size={25} />
           </span>
+
           <span className="brand-text">
             <strong>VoltBridge</strong>
             <small>TECHNOLOGIES</small>
           </span>
         </Link>
 
-        <button
-          type="button"
-          className="mobile-menu-button"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-        >
-          {menuOpen ? <X /> : <Menu />}
-        </button>
-
         <nav className={`main-nav ${menuOpen ? "open" : ""}`}>
-          <Link to="/" onClick={() => setMenuOpen(false)}>
+          <Link to="/" onClick={closeMenu}>
             Home
           </Link>
 
-          <a href="/#products" onClick={() => setMenuOpen(false)}>
+          <a href="/#products" onClick={closeMenu}>
             Shop
           </a>
 
-          <a href="/#about" onClick={() => setMenuOpen(false)}>
+          <a href="/#about" onClick={closeMenu}>
             About
           </a>
 
-          <a href="/#contact" onClick={() => setMenuOpen(false)}>
+          <a href="/#contact" onClick={closeMenu}>
             Contact
           </a>
+        </nav>
 
+        <div className="header-actions">
           <Link
             to="/cart"
-            className="header-cart"
-            onClick={() => setMenuOpen(false)}
+            className="header-icon-link"
+            aria-label={`Shopping cart${cartCount ? `, ${cartCount} items` : ""}`}
+            title="Shopping cart"
+            onClick={closeMenu}
           >
-            <ShoppingCart size={19} />
-            Cart
+            <ShoppingCart size={21} />
             {cartCount > 0 && (
               <span className="cart-count">{cartCount}</span>
             )}
           </Link>
-        </nav>
+
+          <a
+            href="https://wa.me/254726147462"
+            className="header-icon-link whatsapp-header-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat with VoltBridge on WhatsApp"
+            title="WhatsApp us"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M20.52 3.48A11.85 11.85 0 0 0 12.08 0C5.5 0 .15 5.35.15 11.93c0 2.1.55 4.16 1.6 5.97L.05 24l6.25-1.64a11.94 11.94 0 0 0 5.78 1.47h.01c6.58 0 11.93-5.35 11.93-11.93 0-3.19-1.24-6.19-3.5-8.42ZM12.09 21.8a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.84 9.84 0 0 1-1.51-5.26c0-5.45 4.44-9.89 9.89-9.89 2.64 0 5.12 1.03 6.98 2.89a9.82 9.82 0 0 1 2.9 7c0 5.44-4.44 9.87-9.9 9.87Zm5.43-7.4c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.38-.03-.53-.07-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51l-.58-.01c-.2 0-.53.07-.81.38-.28.3-1.06 1.03-1.06 2.5s1.09 2.9 1.24 3.1c.15.2 2.14 3.27 5.19 4.59.72.31 1.28.5 1.72.64.72.23 1.38.2 1.9.12.58-.09 1.77-.73 2.02-1.43.25-.7.25-1.3.17-1.43-.08-.13-.28-.2-.58-.35Z" />
+            </svg>
+          </a>
+
+          <a
+            href="tel:+254726147462"
+            className="header-icon-link"
+            aria-label="Call VoltBridge"
+            title="Call us"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="21"
+              height="21"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.79a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.89.34 1.83.58 2.79.7A2 2 0 0 1 22 16.92Z" />
+            </svg>
+          </a>
+
+          <button
+            type="button"
+            className="mobile-menu-button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={23} /> : <Menu size={23} />}
+          </button>
+        </div>
       </div>
     </header>
   );
 }
+
 
 function Footer() {
   return (
@@ -433,6 +449,7 @@ function Footer() {
             <span className="brand-icon">
               <Package size={24} />
             </span>
+
             <span className="brand-text">
               <strong>VoltBridge</strong>
               <small>TECHNOLOGIES</small>
@@ -446,7 +463,7 @@ function Footer() {
         </div>
 
         <div>
-          <h3>Customer support</h3>
+          <h3>Contact us</h3>
           <p>Bihi Tower, 4th Floor, Suite 5, Nairobi</p>
 
           <a
@@ -456,8 +473,13 @@ function Footer() {
             target="_blank"
             rel="noreferrer"
           >
-            <MessageCircle size={17} />
+            <WhatsAppIcon size={19} />
             Chat with us on WhatsApp
+          </a>
+
+          <a href={`tel:${PHONE_NUMBER}`} className="vb-footer-call">
+            <PhoneCall size={17} />
+            Call us: {PHONE_NUMBER}
           </a>
         </div>
 
@@ -535,18 +557,62 @@ function ProductCard({ product }) {
   );
 }
 
+/* ---------------- HOMEPAGE ---------------- */
+
 function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const orderPlaced = location.state?.orderPlaced;
-  const orderNumber = location.state?.orderNumber;
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const orderPlaced = location.state?.orderPlaced;
+  const orderNumber = location.state?.orderNumber;
+
+  const heroSlides = [
+    {
+      eyebrow: "VOLTBRIDGE TECHNOLOGIES",
+      title: "Power your world.",
+      accent: "Choose the right accessories.",
+      description:
+        "Shop quality chargers, cables and everyday tech essentials in Nairobi.",
+      image:
+        "https://images.unsplash.com/photo-1605236453806-6ff36851218e?auto=format&fit=crop&w=1800&q=85",
+      alt: "Smartphone and technology accessories",
+    },
+    {
+      eyebrow: "SAMSUNG & APPLE ACCESSORIES",
+      title: "Charge smarter.",
+      accent: "Stay connected.",
+      description:
+        "Explore charging adapters and cables for your everyday devices.",
+      image:
+        "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1800&q=85",
+      alt: "Consumer technology accessories",
+    },
+    {
+      eyebrow: "RETAIL & WHOLESALE",
+      title: "Your tech essentials,",
+      accent: "all in one place.",
+      description:
+        "Browse our products and contact us for availability, delivery and wholesale enquiries.",
+      image:
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1800&q=85",
+      alt: "Smartphone product display",
+    },
+  ];
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % heroSlides.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     removeProductStructuredData();
@@ -619,43 +685,285 @@ function HomePage() {
           )}
 
           <p>
-            Your order is pending confirmation. Payment has not been
-            verified by this website. Please follow the instructions
-            provided by VoltBridge Technologies.
+            Your order is pending confirmation. Please follow the
+            instructions provided by VoltBridge Technologies.
           </p>
 
           <button
             type="button"
             className="button button-primary"
-            onClick={() => {
-              navigate("/", { replace: true, state: null });
-            }}
+            onClick={() =>
+              navigate("/", { replace: true, state: null })
+            }
           >
             Continue shopping
           </button>
         </section>
       )}
 
-      <section className="hero">
-        <div className="container hero-content">
-          <div className="hero-copy">
-            <span className="eyebrow">
-              WELCOME TO VOLTBRIDGE TECHNOLOGIES
+      <style>{`
+        .vb-slider {
+          position: relative;
+          overflow: hidden;
+          isolation: isolate;
+          min-height: 500px;
+          background: #171717;
+          color: #fff;
+        }
+
+        .vb-slide-bg {
+          position: absolute;
+          inset: 0;
+          z-index: -2;
+          background-size: cover;
+          background-position: center;
+          transition: background-image .4s ease;
+        }
+
+        .vb-slider::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          background: linear-gradient(
+            90deg,
+            rgba(13,13,13,.88) 0%,
+            rgba(13,13,13,.68) 46%,
+            rgba(13,13,13,.18) 100%
+          );
+        }
+
+        .vb-slide-inner {
+          min-height: 500px;
+          display: flex;
+          align-items: center;
+          padding-top: 54px;
+          padding-bottom: 72px;
+        }
+
+        .vb-slide-copy {
+          max-width: 650px;
+        }
+
+        .vb-slide-copy h1 {
+          color: #fff;
+          font-size: clamp(2.4rem, 5vw, 4.5rem);
+          line-height: 1.04;
+          letter-spacing: -.04em;
+          margin: 16px 0;
+        }
+
+        .vb-slide-copy h1 span {
+          display: block;
+          color: #f5c542;
+        }
+
+        .vb-slide-copy p {
+          max-width: 540px;
+          color: rgba(255,255,255,.9);
+          font-size: 1.08rem;
+          line-height: 1.7;
+        }
+
+        .vb-slide-eyebrow {
+          color: #f5c542;
+          font-weight: 800;
+          letter-spacing: .13em;
+          font-size: .78rem;
+        }
+
+        .vb-slide-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 26px;
+        }
+
+        .vb-call-button,
+        .vb-whatsapp-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 9px;
+          padding: 12px 18px;
+          border-radius: 9px;
+          font-weight: 800;
+          text-decoration: none;
+        }
+
+        .vb-call-button {
+          border: 1px solid rgba(255,255,255,.7);
+          color: #fff;
+          background: rgba(255,255,255,.1);
+        }
+
+        .vb-whatsapp-button {
+          background: #25D366;
+          color: #063d1d;
+        }
+
+        .vb-slider-control {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          border: 1px solid rgba(255,255,255,.55);
+          border-radius: 50%;
+          color: #fff;
+          background: rgba(0,0,0,.35);
+          cursor: pointer;
+          z-index: 2;
+        }
+
+        .vb-slider-prev { left: 18px; }
+        .vb-slider-next { right: 18px; }
+
+        .vb-slider-dots {
+          position: absolute;
+          bottom: 22px;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+          gap: 9px;
+          z-index: 2;
+        }
+
+        .vb-slider-dot {
+          width: 9px;
+          height: 9px;
+          padding: 0;
+          border: 0;
+          border-radius: 50%;
+          background: rgba(255,255,255,.55);
+          cursor: pointer;
+        }
+
+        .vb-slider-dot.active {
+          width: 26px;
+          border-radius: 10px;
+          background: #f5c542;
+        }
+
+        .vb-float-contact {
+          position: fixed;
+          right: 18px;
+          bottom: 18px;
+          z-index: 50;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .vb-float-contact a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border-radius: 999px;
+          padding: 12px 16px;
+          box-shadow: 0 5px 20px rgba(0,0,0,.18);
+          text-decoration: none;
+          font-weight: 800;
+        }
+
+        .vb-float-wa {
+          background: #25D366;
+          color: #063d1d;
+        }
+
+        .vb-float-call {
+          background: #f5c542;
+          color: #222;
+        }
+
+        .vb-footer-call {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        @media (max-width: 640px) {
+          .vb-slider,
+          .vb-slide-inner {
+            min-height: 480px;
+          }
+
+          .vb-slide-inner {
+            padding: 48px 24px 78px;
+          }
+
+          .vb-slide-copy h1 {
+            font-size: 2.45rem;
+          }
+
+          .vb-slider-prev { left: 8px; }
+          .vb-slider-next { right: 8px; }
+
+          .vb-slider-control {
+            width: 34px;
+            height: 34px;
+          }
+
+          .vb-float-contact {
+            right: 10px;
+            bottom: 10px;
+          }
+
+          .vb-float-contact a {
+            padding: 11px 13px;
+            font-size: .86rem;
+          }
+        }
+      `}</style>
+
+      <section className="vb-slider" aria-label="Featured products">
+        <div
+          className="vb-slide-bg"
+          style={{
+            backgroundImage: `url("${heroSlides[activeSlide].image}")`,
+          }}
+          role="img"
+          aria-label={heroSlides[activeSlide].alt}
+        />
+
+        <button
+          type="button"
+          className="vb-slider-control vb-slider-prev"
+          aria-label="Previous banner"
+          onClick={() =>
+            setActiveSlide(
+              (current) =>
+                (current - 1 + heroSlides.length) % heroSlides.length
+            )
+          }
+        >
+          <ChevronRight
+            size={22}
+            style={{ transform: "rotate(180deg)" }}
+          />
+        </button>
+
+        <div className="container vb-slide-inner">
+          <div className="vb-slide-copy">
+            <span className="vb-slide-eyebrow">
+              {heroSlides[activeSlide].eyebrow}
             </span>
 
             <h1>
-              Power your world with
-              <span> the right accessories.</span>
+              {heroSlides[activeSlide].title}
+              <span>{heroSlides[activeSlide].accent}</span>
             </h1>
 
-            <p>
-              Shop phone accessories for everyday charging,
-              protection, entertainment and convenience.
-            </p>
+            <p>{heroSlides[activeSlide].description}</p>
 
-            <div className="hero-actions">
+            <div className="vb-slide-actions">
               <a href="#products" className="button button-primary">
-                Shop products <ArrowRight size={18} />
+                Shop now <ArrowRight size={18} />
               </a>
 
               <a
@@ -664,16 +972,24 @@ function HomePage() {
                 )}
                 target="_blank"
                 rel="noreferrer"
-                className="button button-secondary"
+                className="vb-whatsapp-button"
               >
-                <MessageCircle size={18} />
+                <WhatsAppIcon size={20} />
                 WhatsApp us
+              </a>
+
+              <a
+                href={`tel:${PHONE_NUMBER}`}
+                className="vb-call-button"
+              >
+                <PhoneCall size={18} />
+                Call us
               </a>
             </div>
 
             <div className="hero-trust">
               <span>
-                <ShieldCheck size={18} /> Trusted shopping
+                <ShieldCheck size={18} /> Retail & wholesale
               </span>
               <span>
                 <Truck size={18} /> Delivery available
@@ -681,7 +997,59 @@ function HomePage() {
             </div>
           </div>
         </div>
+
+        <button
+          type="button"
+          className="vb-slider-control vb-slider-next"
+          aria-label="Next banner"
+          onClick={() =>
+            setActiveSlide(
+              (current) => (current + 1) % heroSlides.length
+            )
+          }
+        >
+          <ChevronRight size={22} />
+        </button>
+
+        <div className="vb-slider-dots" aria-label="Choose banner">
+          {heroSlides.map((slide, index) => (
+            <button
+              key={slide.eyebrow}
+              type="button"
+              aria-label={`Show banner ${index + 1}`}
+              aria-current={activeSlide === index ? "true" : undefined}
+              className={`vb-slider-dot ${
+                activeSlide === index ? "active" : ""
+              }`}
+              onClick={() => setActiveSlide(index)}
+            />
+          ))}
+        </div>
       </section>
+
+      <div className="vb-float-contact" aria-label="Contact VoltBridge">
+        <a
+          className="vb-float-wa"
+          href={makeWhatsAppUrl(
+            "Hello VoltBridge Technologies. I would like to enquire about your products."
+          )}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Chat with VoltBridge on WhatsApp"
+        >
+          <WhatsAppIcon size={21} />
+          WhatsApp
+        </a>
+
+        <a
+          className="vb-float-call"
+          href={`tel:${PHONE_NUMBER}`}
+          aria-label="Call VoltBridge Technologies"
+        >
+          <PhoneCall size={19} />
+          Call us
+        </a>
+      </div>
 
       <section className="benefits-section" id="about">
         <div className="container benefits-grid">
@@ -702,7 +1070,7 @@ function HomePage() {
           </article>
 
           <article>
-            <MessageCircle size={26} />
+            <WhatsAppIcon size={26} />
             <div>
               <h3>Easy enquiries</h3>
               <p>Contact us directly through WhatsApp.</p>
@@ -713,9 +1081,7 @@ function HomePage() {
             <RefreshCw size={26} />
             <div>
               <h3>Availability updates</h3>
-              <p>
-                Check whether a product is available before ordering.
-              </p>
+              <p>Check whether a product is available before ordering.</p>
             </div>
           </article>
         </div>
@@ -743,9 +1109,7 @@ function HomePage() {
           <div>
             <span className="eyebrow">EXPLORE OUR STORE</span>
             <h2>Shop our products</h2>
-            <p>
-              Find accessories for your everyday technology needs.
-            </p>
+            <p>Find accessories for your everyday technology needs.</p>
           </div>
         </div>
 
@@ -809,6 +1173,8 @@ function HomePage() {
   );
 }
 
+/* ---------------- PRODUCT DETAILS ---------------- */
+
 function ProductDetailPage() {
   const { productId } = useParams();
   const { addToCart } = useCart();
@@ -842,17 +1208,13 @@ function ProductDetailPage() {
           throw new Error("This product is not currently available.");
         }
 
-        if (!cancelled) {
-          setProduct(data);
-        }
+        if (!cancelled) setProduct(data);
       } catch (err) {
         if (!cancelled) {
           setError(err?.message || "Could not load this product.");
         }
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -863,7 +1225,6 @@ function ProductDetailPage() {
     };
   }, [productId]);
 
-  // Update product metadata and structured data after loading.
   useEffect(() => {
     if (!product) return undefined;
 
@@ -957,7 +1318,7 @@ function ProductDetailPage() {
             target="_blank"
             rel="noreferrer"
           >
-            <MessageCircle size={18} />
+            <WhatsAppIcon size={20} />
             Ask on WhatsApp
           </a>
         </div>
@@ -965,6 +1326,8 @@ function ProductDetailPage() {
     </section>
   );
 }
+
+/* ---------------- CART ---------------- */
 
 function CartPage() {
   const {
@@ -1001,8 +1364,7 @@ function CartPage() {
             {cartItems.map((item) => {
               const available = isAvailable(item);
               const stock = getProductStock(item);
-              const quantityLimit =
-                stock === null ? Infinity : stock;
+              const quantityLimit = stock === null ? Infinity : stock;
 
               return (
                 <article className="cart-item" key={item.id}>
@@ -1035,8 +1397,7 @@ function CartPage() {
                         type="button"
                         aria-label="Increase quantity"
                         disabled={
-                          !available ||
-                          item.quantity >= quantityLimit
+                          !available || item.quantity >= quantityLimit
                         }
                         onClick={() => increaseQuantity(item.id)}
                       >
@@ -1054,9 +1415,7 @@ function CartPage() {
                   </div>
 
                   <strong className="cart-line-total">
-                    {money(
-                      getProductPrice(item) * item.quantity
-                    )}
+                    {money(getProductPrice(item) * item.quantity)}
                   </strong>
                 </article>
               );
@@ -1078,9 +1437,7 @@ function CartPage() {
             <button
               type="button"
               className="button button-primary full-width"
-              disabled={cartItems.some(
-                (item) => !isAvailable(item)
-              )}
+              disabled={cartItems.some((item) => !isAvailable(item))}
               onClick={() => navigate("/checkout")}
             >
               Proceed to checkout <ArrowRight size={17} />
@@ -1095,6 +1452,8 @@ function CartPage() {
     </section>
   );
 }
+
+/* ---------------- CHECKOUT ---------------- */
 
 function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
@@ -1188,9 +1547,7 @@ function CheckoutPage() {
             )}`
         ),
         "",
-        `Order subtotal: ${money(
-          Number(data?.subtotal ?? cartTotal)
-        )}`,
+        `Order subtotal: ${money(Number(data?.subtotal ?? cartTotal))}`,
         form.notes.trim() ? `Notes: ${form.notes.trim()}` : "",
       ]
         .filter(Boolean)
@@ -1265,9 +1622,7 @@ function CheckoutPage() {
             <input
               type="tel"
               value={form.phone}
-              onChange={(event) =>
-                update("phone", event.target.value)
-              }
+              onChange={(event) => update("phone", event.target.value)}
               required
               maxLength={30}
             />
@@ -1278,9 +1633,7 @@ function CheckoutPage() {
             <input
               type="email"
               value={form.email}
-              onChange={(event) =>
-                update("email", event.target.value)
-              }
+              onChange={(event) => update("email", event.target.value)}
             />
           </label>
 
@@ -1289,9 +1642,7 @@ function CheckoutPage() {
             <textarea
               rows={3}
               value={form.address}
-              onChange={(event) =>
-                update("address", event.target.value)
-              }
+              onChange={(event) => update("address", event.target.value)}
               required
               maxLength={1000}
             />
@@ -1307,9 +1658,7 @@ function CheckoutPage() {
               required
             >
               <option value="M-Pesa">M-Pesa</option>
-              <option value="Cash on Delivery">
-                Cash on Delivery
-              </option>
+              <option value="Cash on Delivery">Cash on Delivery</option>
               <option value="Bank Transfer">Bank Transfer</option>
             </select>
           </label>
@@ -1319,9 +1668,7 @@ function CheckoutPage() {
             <textarea
               rows={3}
               value={form.notes}
-              onChange={(event) =>
-                update("notes", event.target.value)
-              }
+              onChange={(event) => update("notes", event.target.value)}
               maxLength={1000}
               placeholder="Optional delivery instructions"
             />
@@ -1337,8 +1684,7 @@ function CheckoutPage() {
             type="submit"
             className="button button-primary full-width"
             disabled={
-              submitting ||
-              cartItems.some((item) => !isAvailable(item))
+              submitting || cartItems.some((item) => !isAvailable(item))
             }
           >
             {submitting ? "Placing order..." : "Place order"}
@@ -1383,6 +1729,8 @@ function CheckoutPage() {
     </section>
   );
 }
+
+/* ---------------- ROUTES ---------------- */
 
 function AppRoutes() {
   return (

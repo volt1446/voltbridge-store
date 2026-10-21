@@ -2059,3 +2059,463 @@ Warm ivory and champagne gold theme
     font-size: 12px;
   }
 }
+
+/* VOLTBRIDGE HEADER AND MOBILE MENU FIX */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(250, 246, 237, 0.98);
+}
+
+.header-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 76px;
+}
+
+/* Keep the logo on the left */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  text-decoration: none;
+}
+
+/* Keep the quick-action icons in one row on the right */
+.header-quick-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.header-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: 32px;
+  min-height: 36px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--text, #30281f);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header-icon-link:hover {
+  color: var(--gold-dark, #8a6525);
+}
+
+.header-whatsapp {
+  color: #168a45;
+}
+
+.header-whatsapp:hover {
+  color: #106c35;
+}
+
+.header-phone {
+  color: var(--text, #30281f);
+}
+
+/* Keep the menu button visible and clickable */
+.mobile-menu-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 5px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text, #30281f);
+  cursor: pointer;
+  z-index: 1002;
+}
+
+.mobile-menu-button:hover {
+  background: #eee2cb;
+}
+
+/* Desktop navigation */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+/* Mobile navigation: match the open class used by App.jsx */
+@media (max-width: 720px) {
+  .header-inner {
+    gap: 8px;
+    min-height: 72px;
+  }
+
+  .main-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 1001;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 10px 20px 16px;
+    background: #faf6ed;
+    border-bottom: 1px solid var(--border, #e6dcc9);
+    box-shadow: 0 12px 24px rgba(48, 40, 31, 0.12);
+  }
+
+  .main-nav.open {
+    display: flex;
+  }
+
+  .main-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--border, #e6dcc9);
+    text-decoration: none;
+  }
+
+  .main-nav a:last-child {
+    border-bottom: 0;
+  }
+
+  .header-quick-actions {
+    gap: 7px;
+  }
+
+  .header-icon-link {
+    min-width: 29px;
+    min-height: 34px;
+  }
+
+  .mobile-menu-button {
+    margin-left: 0;
+  }
+}
+
+/* Extra-small screens */
+@media (max-width: 380px) {
+  .header-inner {
+    gap: 5px;
+  }
+
+  .header-quick-actions {
+    gap: 3px;
+  }
+
+  .header-icon-link {
+    min-width: 27px;
+    padding: 3px;
+  }npm 
+
+  .mobile-menu-button {
+    width: 31px;
+    min-width: 31px;
+  }
+}
+
+/* =========================================
+   VOLTBRIDGE HEADER — FINAL HEADER OVERRIDES
+   ========================================= */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(250, 246, 237, 0.98);
+  border-bottom: 1px solid var(--border, #e6dcc9);
+  backdrop-filter: blur(14px);
+}
+
+.header-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(100% - 32px, 1440px);
+  min-height: 78px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 1 auto;
+  gap: 9px;
+  min-width: 0;
+  color: var(--text, #30281f);
+  text-decoration: none;
+}
+
+.brand-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #a98034;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.brand-text strong {
+  font-size: 21px;
+  font-weight: 750;
+  line-height: 1.1;
+}
+
+.brand-text small {
+  color: #8a6525;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.main-nav a {
+  color: #665b4c;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.main-nav a:hover {
+  color: #8a6525;
+}
+
+.header-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-left: 8px;
+}
+
+.header-icon-link {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #30281f;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header-icon-link:hover {
+  color: #a98034;
+}
+
+.whatsapp-header-link {
+  color: #168b4b;
+}
+
+.whatsapp-header-link:hover {
+  color: #116c39;
+}
+
+.header-icon-link .cart-count {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 50px;
+  background: #a98034;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.mobile-menu-button {
+  display: none;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #30281f;
+  cursor: pointer;
+}
+
+.mobile-menu-button:hover {
+  color: #a98034;
+}
+
+/* Tablet and mobile header */
+@media (max-width: 900px) {
+  .header-inner {
+    gap: 10px;
+  }
+
+  .brand-text strong {
+    font-size: 19px;
+  }
+
+  .main-nav {
+    gap: 14px;
+  }
+
+  .header-actions {
+    gap: 9px;
+  }
+}
+
+@media (max-width: 720px) {
+  .header-inner {
+    min-height: 70px;
+    gap: 8px;
+    padding: 9px 0;
+  }
+
+  .brand {
+    gap: 6px;
+  }
+
+  .brand-icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .brand-text strong {
+    font-size: 17px;
+  }
+
+  .brand-text small {
+    font-size: 7px;
+    letter-spacing: 1.5px;
+  }
+
+  .header-actions {
+    gap: 4px;
+    margin-left: auto;
+  }
+
+  .header-icon-link,
+  .mobile-menu-button {
+    width: 32px;
+    height: 38px;
+  }
+
+  .header-icon-link svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mobile-menu-button {
+    display: inline-flex;
+  }
+
+  .main-nav {
+    position: absolute;
+    top: 100%;
+    right: -16px;
+    left: -16px;
+    z-index: 1001;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    margin: 0;
+    padding: 8px 20px 16px;
+    background: #faf6ed;
+    border-top: 1px solid #e6dcc9;
+    border-bottom: 1px solid #e6dcc9;
+    box-shadow: 0 12px 24px rgba(48, 40, 31, 0.12);
+  }
+
+  .main-nav.open {
+    display: flex;
+  }
+
+  .main-nav a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 45px;
+    padding: 12px 4px;
+    border-bottom: 1px solid #e6dcc9;
+    font-size: 14px;
+  }
+
+  .main-nav a:last-child {
+    border-bottom: 0;
+  }
+}
+
+/* Keep all four controls visible on very small screens */
+@media (max-width: 380px) {
+  .header-inner {
+    width: calc(100% - 20px);
+    gap: 4px;
+  }
+
+  .brand {
+    gap: 4px;
+  }
+
+  .brand-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .brand-text strong {
+    font-size: 15px;
+  }
+
+  .brand-text small {
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+
+  .header-actions {
+    gap: 1px;
+  }
+
+  .header-icon-link,
+  .mobile-menu-button {
+    width: 29px;
+  }
+}
