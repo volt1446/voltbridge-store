@@ -7,13 +7,24 @@ export default {
       return generateSitemap(env);
     }
 
-    // Continue serving the existing Vite website.
     return env.ASSETS.fetch(request);
   },
 };
 
 async function generateSitemap(env) {
   const siteUrl = "https://voltbridgetechnologies.com";
+
+  const staticPages = [
+    "/",
+    "/about",
+    "/contact",
+    "/service-center",
+    "/privacy-policy",
+    "/extended-warranty",
+    "/terms-and-conditions",
+    "/shipping-and-return-policy",
+    "/faqs",
+  ];
 
   if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY) {
     return new Response("Sitemap configuration is incomplete.", {
@@ -45,14 +56,14 @@ async function generateSitemap(env) {
     const products = await response.json();
 
     const urls = [
-      `${siteUrl}/`,
+      ...staticPages.map((page) => `${siteUrl}${page}`),
       ...products.map(
         (product) => `${siteUrl}/product/${product.id}`
       ),
     ];
 
     const xmlEscape = (value) =>
-      value
+      String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -61,7 +72,9 @@ async function generateSitemap(env) {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((url) => `  <url><loc>${xmlEscape(url)}</loc></url>`).join("\n")}
+${urls
+  .map((url) => `  <url><loc>${xmlEscape(url)}</loc></url>`)
+  .join("\n")}
 </urlset>`;
 
     return new Response(xml, {
