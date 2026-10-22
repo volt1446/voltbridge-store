@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Truck, PackageCheck, RefreshCw, MessageCircle } from "lucide-react";
+import {useDocumentTitle} from "../useDocumentTitle";
 
 const WHATSAPP_URL =
   "https://wa.me/254726147462?text=" +
@@ -9,6 +10,12 @@ const WHATSAPP_URL =
   );
 
 export default function ShippingReturns() {
+    useDocumentTitle(
+        'VoltBridge | Delivery & Return Policy Kenya',
+        'Find out about VoltBridge Technologies shipping times across Nairobi and Kenya, delivery fees, and our 7-day return policy.'
+    );
+
+
   return (
     <main className="container policy-page">
       <nav className="breadcrumbs" aria-label="Breadcrumb">

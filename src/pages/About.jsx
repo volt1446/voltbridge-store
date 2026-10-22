@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { ShieldCheck, Truck, Users, MessageCircle } from "lucide-react";
+import {useDocumentTitle} from "../useDocumentTitle";
 
 const WHATSAPP_URL =
   "https://wa.me/254726147462?text=" +
@@ -9,6 +10,10 @@ const WHATSAPP_URL =
   );
 
 export default function About() {
+    useDocumentTitle(
+        'VoltBridge | About Our Tech & Accessories Store in Kenya',
+        'Learn more about VoltBridge Technologies, your trusted supplier of original Samsung chargers, Apple accessories, and electronics in Nairobi, Kenya.'
+    );
   return (
     <main className="container policy-page">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
