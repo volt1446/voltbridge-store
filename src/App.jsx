@@ -212,7 +212,7 @@ function restoreHomeMetadata() {
   setMeta("name", "robots", "index, follow");
 
   setMeta("property", "og:type", "website");
-  setMeta("property", "og:site_name", "VoltBridge Technologies");
+  setMeta("property", "og:site_name", "VoltBridge ");
   setMeta("property", "og:title", HOME_TITLE);
   setMeta("property", "og:description", HOME_DESCRIPTION);
   setMeta("property", "og:url", `${SITE_URL}/`);
