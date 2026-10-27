@@ -21,7 +21,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://voltbridgetechnologies.com/product/a2f003b8-1bc0-41f5-8e74-1cae5987fe73</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://voltbridgetechnologies.com/product/c3ca451d-de4a-4995-b838-764930a8d21f</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voltbridgetechnologies.com/product/d6640d6d-314a-4e47-943c-6ec3308afb20</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -31,7 +41,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://voltbridgetechnologies.com/product/d6640d6d-314a-4e47-943c-6ec3308afb20</loc>
+    <loc>https://voltbridgetechnologies.com/product/99f60a41-5b73-44ae-a358-e08bc88c3c9c</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -52,16 +62,6 @@
   </url>
   <url>
     <loc>https://voltbridgetechnologies.com/product/3c4540a3-d9fd-40ba-83c5-e2b41c1fd089</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://voltbridgetechnologies.com/product/99f60a41-5b73-44ae-a358-e08bc88c3c9c</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://voltbridgetechnologies.com/product/a2f003b8-1bc0-41f5-8e74-1cae5987fe73</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
