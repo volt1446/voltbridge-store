@@ -471,7 +471,7 @@ function Footer() {
 
         <div>
           <h3>Contact Us</h3>
-          <p>Bihi Tower, 4th Floor, Suite 5, Nairobi</p>
+          <p>Bihi Tower, 4th Floor, Suite 6, Nairobi</p>
 
           <a
             href={makeWhatsAppUrl(
@@ -974,12 +974,7 @@ function HomePage() {
                 className="vb-whatsapp-button"
               >
                 <WhatsAppIcon size={20} />
-                WhatsApp us
-              </a>
-
-              <a href={`tel:${PHONE_NUMBER}`} className="vb-call-button">
-                <PhoneCall size={18} />
-                Call us
+                WhatsApp
               </a>
             </div>
 
@@ -1030,15 +1025,6 @@ function HomePage() {
         >
           <WhatsAppIcon size={21} />
           WhatsApp
-        </a>
-
-        <a
-          className="vb-float-call"
-          href={`tel:${PHONE_NUMBER}`}
-          aria-label="Call VoltBridge Technologies"
-        >
-          <PhoneCall size={19} />
-          Call us
         </a>
       </div>
 
