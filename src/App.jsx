@@ -1,3 +1,11 @@
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import ExtendedWarranty from "./pages/ExtendedWarranty";
+import FAQs from "./pages/FAQs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ServiceCenter from "./pages/ServiceCenter";
+import ShippingReturns from "./pages/ShippingReturns";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 import {
   useCallback,
@@ -28,7 +36,6 @@ import {
   Package,
   ShieldCheck,
   Truck,
-  PhoneCall,
   RefreshCw,
   ChevronRight,
 } from "lucide-react";
@@ -36,38 +43,25 @@ import {
 import { supabase } from "./supabase";
 import { useCart } from "./CartContext";
 import Admin from "./Admin";
-
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import ServiceCenter from "./pages/ServiceCenter";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import ExtendedWarranty from "./pages/ExtendedWarranty";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import ShippingReturns from "./pages/ShippingReturns";
-import FAQs from "./pages/FAQs";
-
 import "./App.css";
 
 const WHATSAPP_NUMBER = "254726147462";
-const PHONE_NUMBER = "+254726147462";
 const SITE_URL = "https://voltbridgetechnologies.com";
 
 const HOME_TITLE =
-  "Samsung Chargers & Apple Accessories in Kenya | VoltBridge";
+  "Gaming Consoles, Samsung & Apple Chargers in Nairobi | VoltBridge";
 
 const HOME_DESCRIPTION =
-  "Shop Samsung chargers, Apple power adapters and cables at VoltBridge Technologies. Retail and wholesale in Nairobi, with shipping across Kenya. Order online or via WhatsApp.";
+  "Shop gaming consoles, Samsung chargers and adapters, and Apple chargers and adapters at VoltBridge Technologies in Nairobi, Kenya. Retail and wholesale enquiries welcome.";
 
 const CATEGORIES = [
-  "All",
-  "Phone Cases",
-  "Chargers & Cables",
-  "Power Banks",
-  "Earbuds & Headphones",
-  "Screen Protectors",
-  "Phone Holders",
-  "Other Accessories",
+  "All Products",
+  "Gaming Consoles",
+  "Samsung Chargers & Adapters",
+  "Apple Chargers & Adapters",
 ];
+
+/* ---------------- GENERAL HELPERS ---------------- */
 
 function money(value) {
   return `KSh ${Number(value || 0).toLocaleString("en-KE", {
@@ -159,6 +153,110 @@ function makeWhatsAppUrl(message) {
   )}`;
 }
 
+/*
+  These category checks support existing database category names
+  such as "Gaming Devices", "Samsung Chargers", and "Apple Accessories".
+*/
+
+function getStoreCategory(product) {
+  const category = String(product?.category || "").toLowerCase();
+  const name = String(product?.name || "").toLowerCase();
+  const description = String(product?.description || "").toLowerCase();
+
+  const text = `${category} ${name} ${description}`;
+
+  if (
+    text.includes("gaming") ||
+    text.includes("console") ||
+    text.includes("handheld") ||
+    text.includes("playstation") ||
+    text.includes("xbox") ||
+    text.includes("nintendo")
+  ) {
+    return "Gaming Consoles";
+  }
+
+  if (
+    text.includes("samsung") &&
+    (
+      text.includes("charger") ||
+      text.includes("adapter") ||
+      text.includes("power") ||
+      text.includes("cable") ||
+      text.includes("usb-c")
+    )
+  ) {
+    return "Samsung Chargers & Adapters";
+  }
+
+  if (
+    (
+      text.includes("apple") ||
+      text.includes("iphone") ||
+      text.includes("ipad") ||
+      text.includes("macbook")
+    ) &&
+    (
+      text.includes("charger") ||
+      text.includes("adapter") ||
+      text.includes("cable") ||
+      text.includes("lightning") ||
+      text.includes("usb-c") ||
+      text.includes("power")
+    )
+  ) {
+    return "Apple Chargers & Adapters";
+  }
+
+  return "Other";
+}
+
+/* ---------------- FEATURED HOMEPAGE PRODUCTS ---------------- */
+
+/*
+  The homepage slider uses actual product images from Supabase.
+
+  J36:
+  Looks for J36 or J36 Ultra in the product name.
+
+  Samsung:
+  Looks for Samsung charger and adapter products.
+
+  Apple:
+  Looks for Apple charger and adapter products.
+
+  If a matching product or image is missing, the placeholder is used.
+*/
+
+function getFeaturedJ36(products) {
+  return products.find((product) => {
+    const name = String(product?.name || "").toLowerCase();
+
+    return (
+      name.includes("j36 ultra") ||
+      name.includes("j36")
+    );
+  });
+}
+
+function getFeaturedSamsung(products) {
+  return products.find((product) => {
+    return (
+      getStoreCategory(product) ===
+      "Samsung Chargers & Adapters"
+    );
+  });
+}
+
+function getFeaturedApple(products) {
+  return products.find((product) => {
+    return (
+      getStoreCategory(product) ===
+      "Apple Chargers & Adapters"
+    );
+  });
+}
+
 function WhatsAppIcon({ size = 20 }) {
   return (
     <svg
@@ -226,22 +324,18 @@ function restoreHomeMetadata() {
 
 function updateProductMetadata(product) {
   const url = `${SITE_URL}/product/${product.id}`;
-  const name = String(product.name || "Phone Accessory").trim();
+  const name = String(product.name || "Product").trim();
 
   const title =
-    `${name} | Buy in Kenya | VoltBridge Technologies`;
+    `${name} in Nairobi, Kenya | VoltBridge Technologies`;
 
-  const productDescription = String(
+  const description = String(
     product.description ||
-      `Shop ${name} at VoltBridge Technologies in Nairobi, Kenya. Retail and wholesale enquiries welcome.`
+      `Shop ${name} at VoltBridge Technologies in Nairobi, Kenya.`
   )
     .replace(/\s+/g, " ")
-    .trim();
-
-  const description =
-    productDescription.length > 155
-      ? `${productDescription.slice(0, 152).trimEnd()}...`
-      : productDescription;
+    .trim()
+    .slice(0, 155);
 
   document.title = title;
 
@@ -289,7 +383,7 @@ function updateProductStructuredData(product) {
     name: product.name,
     description:
       product.description ||
-      `Shop ${product.name} at VoltBridge Technologies in Nairobi, Kenya.`,
+      `Shop ${product.name} at VoltBridge Technologies in Nairobi.`,
     url,
     brand: {
       "@type": "Brand",
@@ -341,9 +435,16 @@ function Availability({ product }) {
   );
 }
 
+/* ---------------- HEADER ---------------- */
+
 function Header() {
   const { cartItems } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerSearch, setHeaderSearch] = useState("");
+  const [headerCategory, setHeaderCategory] = useState("All Products");
 
   const cartCount = cartItems.reduce(
     (total, item) => total + Number(item.quantity || 0),
@@ -352,10 +453,163 @@ function Header() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  const menuCategories = [
+    "Gaming Consoles",
+    "Samsung Chargers & Adapters",
+    "Apple Chargers & Adapters",
+  ];
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    setHeaderSearch(params.get("search") || "");
+    setHeaderCategory(
+      params.get("category") || "All Products"
+    );
+  }, [location.search]);
+
+  function handleHeaderSearch(event) {
+    event.preventDefault();
+
+    const params = new URLSearchParams();
+
+    if (headerSearch.trim()) {
+      params.set("search", headerSearch.trim());
+    }
+
+    if (headerCategory !== "All Products") {
+      params.set("category", headerCategory);
+    }
+
+    const query = params.toString();
+
+    navigate(query ? `/?${query}#products` : "/#products");
+
+    closeMenu();
+  }
+
+  function chooseMenuCategory(category) {
+    const params = new URLSearchParams();
+
+    params.set("category", category);
+
+    navigate(`/?${params.toString()}#products`);
+
+    closeMenu();
+  }
+
   return (
-    <header className="site-header">
-      <div className="container header-inner">
-        <Link to="/" className="brand" onClick={closeMenu}>
+    <header className="site-header vb-site-header">
+      <div className="container vb-header-inner">
+
+        {/* LEFT: MENU */}
+
+        <div className="vb-menu-wrapper">
+          <button
+            type="button"
+            className="vb-hamburger"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={25} /> : <Menu size={25} />}
+          </button>
+
+          {menuOpen && (
+            <>
+              <button
+                type="button"
+                className="vb-menu-backdrop"
+                aria-label="Close menu"
+                onClick={closeMenu}
+              />
+
+              <nav className="vb-dropdown-menu">
+                <div className="vb-menu-heading">
+                  <strong>SHOP PRODUCTS</strong>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => chooseMenuCategory("All Products")}
+                >
+                  All Products
+                  <ChevronRight size={16} />
+                </button>
+
+                {menuCategories.map((item) => (
+                  <button
+                    type="button"
+                    key={item}
+                    onClick={() => chooseMenuCategory(item)}
+                  >
+                    {item}
+                    <ChevronRight size={16} />
+                  </button>
+                ))}
+
+                <div className="vb-menu-divider" />
+
+                <div className="vb-menu-heading">
+                  <strong>BUSINESS</strong>
+                </div>
+
+                <Link to="/about" onClick={closeMenu}>
+                  About Us
+                </Link>
+
+                <Link to="/contact" onClick={closeMenu}>
+                  Contact & Location
+                </Link>
+
+                <a
+                  href={makeWhatsAppUrl(
+                    "Hello VoltBridge Technologies. I am interested in wholesale products."
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={closeMenu}
+                >
+                  Wholesale Enquiries
+                </a>
+
+                <div className="vb-menu-divider" />
+
+                <div className="vb-menu-heading">
+                  <strong>CUSTOMER SUPPORT</strong>
+                </div>
+
+                <Link to="/faqs" onClick={closeMenu}>
+                  FAQs
+                </Link>
+
+                <Link to="/shipping-returns" onClick={closeMenu}>
+                  Shipping & Returns
+                </Link>
+
+                <Link to="/privacy-policy" onClick={closeMenu}>
+                  Privacy Policy
+                </Link>
+
+                <Link to="/terms-and-conditions" onClick={closeMenu}>
+                  Terms & Conditions
+                </Link>
+
+                <Link to="/service-center" onClick={closeMenu}>
+                  Service Center
+                </Link>
+
+                <Link to="/extended-warranty" onClick={closeMenu}>
+                  Extended Warranty
+                </Link>
+              </nav>
+            </>
+          )}
+        </div>
+
+        {/* LOGO */}
+
+        <Link to="/" className="brand vb-header-brand">
           <span className="brand-icon">
             <Package size={25} />
           </span>
@@ -366,77 +620,368 @@ function Header() {
           </span>
         </Link>
 
-        <nav className={`main-nav ${menuOpen ? "open" : ""}`}>
-          <Link to="/" onClick={closeMenu}>Home</Link>
-          <Link to="/#products" onClick={closeMenu}>Shop</Link>
-          <Link to="/about" onClick={closeMenu}>About</Link>
-          <Link to="/contact" onClick={closeMenu}>Contact</Link>
-        </nav>
+        {/* CENTRE: SEARCH BAR */}
 
-        <div className="header-actions">
+        <form
+          className="vb-header-search"
+          onSubmit={handleHeaderSearch}
+        >
+          <select
+            aria-label="Search category"
+            value={headerCategory}
+            onChange={(event) =>
+              setHeaderCategory(event.target.value)
+            }
+          >
+            {CATEGORIES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="search"
+            placeholder="Search products..."
+            aria-label="Search products"
+            value={headerSearch}
+            onChange={(event) =>
+              setHeaderSearch(event.target.value)
+            }
+          />
+
+          <button type="submit" aria-label="Search">
+            <Search size={19} />
+            <span>Search</span>
+          </button>
+        </form>
+
+        {/* RIGHT: WHATSAPP AND CART */}
+
+        <div className="vb-header-actions">
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            className="vb-header-whatsapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat with us on WhatsApp"
+            title="WhatsApp us"
+          >
+            <WhatsAppIcon size={21} />
+            <span>WhatsApp</span>
+          </a>
+
           <Link
             to="/cart"
-            className="header-icon-link"
+            className="vb-header-cart"
             aria-label={`Shopping cart${cartCount ? `, ${cartCount} items` : ""}`}
             title="Shopping cart"
-            onClick={closeMenu}
           >
-            <ShoppingCart size={21} />
+            <ShoppingCart size={23} />
+            <span className="vb-cart-label">Cart</span>
+
             {cartCount > 0 && (
               <span className="cart-count">{cartCount}</span>
             )}
           </Link>
-
-          <a
-            href={makeWhatsAppUrl("Hello VoltBridge Technologies. I need assistance.")}
-            className="header-icon-link whatsapp-header-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat with VoltBridge on WhatsApp"
-            title="WhatsApp us"
-          >
-            <WhatsAppIcon size={22} />
-          </a>
-
-          <a
-            href={`tel:${PHONE_NUMBER}`}
-            className="header-icon-link"
-            aria-label="Call VoltBridge"
-            title="Call us"
-          >
-            <PhoneCall size={21} />
-          </a>
-
-          <button
-            type="button"
-            className="mobile-menu-button"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? <X size={23} /> : <Menu size={23} />}
-          </button>
         </div>
       </div>
+
+      <style>{`
+        .vb-site-header {
+          position: relative;
+          z-index: 100;
+          background: #fff;
+          border-bottom: 1px solid #ededed;
+        }
+
+        .vb-header-inner {
+          display: grid;
+          grid-template-columns: auto auto minmax(220px, 1fr) auto;
+          align-items: center;
+          gap: 18px;
+          min-height: 82px;
+        }
+
+        .vb-menu-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+          z-index: 110;
+        }
+
+        .vb-hamburger {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 42px;
+          height: 42px;
+          border: 0;
+          border-radius: 7px;
+          background: transparent;
+          cursor: pointer;
+          color: #242424;
+        }
+
+        .vb-hamburger:hover {
+          background: #fff5d5;
+          color: #987000;
+        }
+
+        .vb-header-brand {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          white-space: nowrap;
+        }
+
+        .vb-header-search {
+          display: flex;
+          align-items: stretch;
+          width: 100%;
+          min-width: 0;
+          height: 46px;
+          border: 1px solid #dedede;
+          border-radius: 7px;
+          overflow: hidden;
+          background: #fff;
+        }
+
+        .vb-header-search select {
+          flex: 0 0 175px;
+          width: 175px;
+          min-width: 0;
+          padding: 0 10px;
+          border: 0;
+          border-right: 1px solid #e5e5e5;
+          outline: none;
+          background: #f8f8f8;
+          color: #333;
+          font-size: .83rem;
+        }
+
+        .vb-header-search input {
+          flex: 1;
+          min-width: 0;
+          width: 100%;
+          padding: 0 13px;
+          border: 0;
+          outline: none;
+          background: #fff;
+          color: #222;
+          font-size: .92rem;
+        }
+
+        .vb-header-search button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+          flex: 0 0 auto;
+          padding: 0 17px;
+          border: 0;
+          background: #f5c542;
+          color: #242424;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .vb-header-search button:hover {
+          background: #e9b72b;
+        }
+
+        .vb-header-actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 17px;
+          white-space: nowrap;
+        }
+
+        .vb-header-whatsapp,
+        .vb-header-cart {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+          color: #292929;
+          text-decoration: none;
+          font-size: .88rem;
+          font-weight: 700;
+        }
+
+        .vb-header-whatsapp {
+          color: #188d48;
+        }
+
+        .vb-header-cart:hover,
+        .vb-header-whatsapp:hover {
+          color: #a77b00;
+        }
+
+        .vb-header-cart .cart-count {
+          position: absolute;
+          top: -10px;
+          right: -11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4px;
+          border-radius: 20px;
+          background: #f5c542;
+          color: #222;
+          font-size: 11px;
+          font-weight: 800;
+        }
+
+        .vb-dropdown-menu {
+          position: absolute;
+          top: calc(100% + 17px);
+          left: 0;
+          width: min(310px, calc(100vw - 30px));
+          max-height: 75vh;
+          overflow-y: auto;
+          background: #fff;
+          color: #222;
+          border-radius: 9px;
+          box-shadow: 0 12px 35px rgba(0,0,0,.2);
+          padding: 13px;
+          z-index: 112;
+        }
+
+        .vb-dropdown-menu a,
+        .vb-dropdown-menu button {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          width: 100%;
+          padding: 11px 10px;
+          color: #292929;
+          text-decoration: none;
+          font-family: inherit;
+          font-size: .94rem;
+          text-align: left;
+          border: 0;
+          border-radius: 6px;
+          background: transparent;
+          cursor: pointer;
+        }
+
+        .vb-dropdown-menu a:hover,
+        .vb-dropdown-menu button:hover {
+          background: #fff7dc;
+          color: #8a6500;
+        }
+
+        .vb-menu-heading {
+          padding: 9px 10px 5px;
+          color: #997300;
+          font-size: .75rem;
+          letter-spacing: .08em;
+        }
+
+        .vb-menu-divider {
+          height: 1px;
+          background: #eee;
+          margin: 9px 4px;
+        }
+
+        .vb-menu-backdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 111;
+          border: 0;
+          background: rgba(0,0,0,.25);
+          cursor: default;
+        }
+
+        @media (max-width: 900px) {
+          .vb-header-inner {
+            grid-template-columns: auto auto minmax(160px, 1fr) auto;
+            gap: 10px;
+          }
+
+          .vb-header-search select {
+            flex-basis: 135px;
+            width: 135px;
+            font-size: .76rem;
+          }
+
+          .vb-header-actions {
+            gap: 11px;
+          }
+
+          .vb-header-whatsapp span,
+          .vb-cart-label {
+            display: none;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .vb-header-inner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+          }
+
+          .vb-header-brand {
+            margin-right: auto;
+          }
+
+          .vb-header-search {
+            order: 5;
+            flex: 1 0 100%;
+            height: 43px;
+          }
+
+          .vb-header-search select {
+            flex: 0 0 112px;
+            width: 112px;
+            padding: 0 5px;
+            font-size: .7rem;
+          }
+
+          .vb-header-search input {
+            padding: 0 8px;
+            font-size: .82rem;
+          }
+
+          .vb-header-search button {
+            padding: 0 11px;
+          }
+
+          .vb-header-search button span {
+            display: none;
+          }
+
+          .vb-header-actions {
+            gap: 13px;
+          }
+
+          .vb-header-whatsapp,
+          .vb-header-cart {
+            padding: 5px;
+          }
+
+          .vb-dropdown-menu {
+            top: calc(100% + 12px);
+          }
+        }
+      `}</style>
     </header>
   );
 }
 
-function Footer() {
-  const companyLinks = [
-    { label: "About Us", to: "/about" },
-    { label: "Contact Us", to: "/contact" },
-    { label: "Service Center", to: "/service-center" },
-    { label: "Privacy Policy", to: "/privacy-policy" },
-    { label: "Extended Warranty", to: "/extended-warranty" },
-    { label: "Terms and Conditions", to: "/terms-and-conditions" },
-    {
-      label: "Shipping and Return Policy",
-      to: "/shipping-and-return-policy",
-    },
-    { label: "FAQs", to: "/faqs" },
-  ];
+/* ---------------- FOOTER ---------------- */
 
+function Footer() {
   return (
     <footer className="site-footer" id="contact">
       <div className="container footer-content">
@@ -453,24 +998,13 @@ function Footer() {
           </Link>
 
           <p>
-            Your destination for phone accessories and everyday
-            technology essentials.
+            Your destination for gaming consoles, Samsung chargers
+            and adapters, and Apple chargers and adapters.
           </p>
         </div>
 
         <div>
-          <h3>Our Company</h3>
-          <nav className="footer-company-links" aria-label="Our Company">
-            {companyLinks.map((item) => (
-              <Link key={item.to} to={item.to}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        <div>
-          <h3>Contact Us</h3>
+          <h3>Contact us</h3>
           <p>Bihi Tower, 4th Floor, Suite 6, Nairobi</p>
 
           <a
@@ -483,20 +1017,12 @@ function Footer() {
             <WhatsAppIcon size={19} />
             Chat with us on WhatsApp
           </a>
-
-          <a href={`tel:${PHONE_NUMBER}`} className="vb-footer-call">
-            <PhoneCall size={17} />
-            Call us: {PHONE_NUMBER}
-          </a>
         </div>
 
         <div>
-          <h3>Shopping with Us</h3>
+          <h3>Shopping with us</h3>
           <p>Retail and wholesale enquiries welcome.</p>
           <p>Nairobi delivery and countrywide shipping.</p>
-          <Link to="/#products">
-            Shop our products <ArrowRight size={15} />
-          </Link>
         </div>
       </div>
 
@@ -509,6 +1035,8 @@ function Footer() {
     </footer>
   );
 }
+
+/* ---------------- PRODUCT CARD ---------------- */
 
 function ProductCard({ product }) {
   const { addToCart } = useCart();
@@ -530,17 +1058,20 @@ function ProductCard({ product }) {
               event.currentTarget.style.display = "none";
             }}
           />
+
           {onSale && <span className="sale-badge">SALE</span>}
         </div>
       </Link>
 
       <div className="product-card-content">
         <span className="product-category">
-          {product.category || "Accessories"}
+          {product.category || "Products"}
         </span>
 
         <h3>
-          <Link to={`/product/${product.id}`}>{product.name}</Link>
+          <Link to={`/product/${product.id}`}>
+            {product.name}
+          </Link>
         </h3>
 
         <div className="product-price">
@@ -574,48 +1105,75 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("All Products");
   const [activeSlide, setActiveSlide] = useState(0);
 
   const orderPlaced = location.state?.orderPlaced;
   const orderNumber = location.state?.orderNumber;
 
-  const heroSlides = [
-    {
-      eyebrow: "VOLTBRIDGE TECHNOLOGIES",
-      title: "Power your world.",
-      accent: "Choose the right accessories.",
-      description:
-        "Shop quality chargers, cables and everyday tech essentials in Nairobi.",
-      image:
-        "https://images.unsplash.com/photo-1605236453806-6ff36851218e?auto=format&fit=crop&w=1800&q=85",
-      alt: "Smartphone and technology accessories",
-    },
-    {
-      eyebrow: "SAMSUNG & APPLE ACCESSORIES",
-      title: "Charge smarter.",
-      accent: "Stay connected.",
-      description:
-        "Explore charging adapters and cables for your everyday devices.",
-      image:
-        "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1800&q=85",
-      alt: "Consumer technology accessories",
-    },
-    {
-      eyebrow: "RETAIL & WHOLESALE",
-      title: "Your tech essentials,",
-      accent: "all in one place.",
-      description:
-        "Browse our products and contact us for availability, delivery and wholesale enquiries.",
-      image:
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1800&q=85",
-      alt: "Smartphone product display",
-    },
-  ];
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    setSearch(params.get("search") || "");
+    setCategory(params.get("category") || "All Products");
+  }, [location.search]);
+
+  /*
+    Find the actual products in the Supabase catalogue.
+    These images automatically appear after products load.
+  */
+
+  const j36Product = useMemo(
+    () => getFeaturedJ36(products),
+    [products]
+  );
+
+  const samsungProduct = useMemo(
+    () => getFeaturedSamsung(products),
+    [products]
+  );
+
+  const appleProduct = useMemo(
+    () => getFeaturedApple(products),
+    [products]
+  );
+
+  const heroSlides = useMemo(
+    () => [
+      {
+        eyebrow: "J36 ULTRA HANDHELD CONSOLE",
+        title: "Ready to play?",
+        accent: "Gaming wherever you go.",
+        description:
+          "Discover the J36 Ultra handheld gaming console at VoltBridge Technologies.",
+        image: getProductImage(j36Product),
+        alt: "J36 Ultra handheld gaming console",
+      },
+      {
+        eyebrow: "SAMSUNG CHARGERS & ADAPTERS",
+        title: "Power up.",
+        accent: "Samsung charging essentials.",
+        description:
+          "Explore Samsung chargers, power adapters and USB-C cables at VoltBridge Technologies.",
+        image: getProductImage(samsungProduct),
+        alt: "Samsung charger and power adapter from VoltBridge Technologies",
+      },
+      {
+        eyebrow: "APPLE CHARGERS & ADAPTERS",
+        title: "Stay connected.",
+        accent: "Apple charging essentials.",
+        description:
+          "Shop Apple power adapters and charging cables at VoltBridge Technologies.",
+        image: getProductImage(appleProduct),
+        alt: "Apple charging adapter and cable from VoltBridge Technologies",
+      },
+    ],
+    [j36Product, samsungProduct, appleProduct]
+  );
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % heroSlides.length);
+      setActiveSlide((current) => (current + 1) % 3);
     }, 5000);
 
     return () => window.clearInterval(timer);
@@ -671,12 +1229,27 @@ function HomePage() {
           .toLowerCase()
           .includes(term);
 
+      const productCategory = getStoreCategory(product);
+
       const matchesCategory =
-        category === "All" || product.category === category;
+        category === "All Products" ||
+        productCategory === category;
 
       return matchesSearch && matchesCategory;
     });
   }, [products, search, category]);
+
+  const saleProducts = products.filter(
+    (product) =>
+      isProductOnSale(product) &&
+      getStoreCategory(product) !== "Other"
+  );
+
+  function clearProductFilters() {
+    setSearch("");
+    setCategory("All Products");
+    navigate("/#products");
+  }
 
   return (
     <>
@@ -685,7 +1258,9 @@ function HomePage() {
           <ShieldCheck size={35} />
           <h2>Order submitted successfully!</h2>
 
-          {orderNumber && <p>Your order reference is: {orderNumber}</p>}
+          {orderNumber && (
+            <p>Your order reference is: {orderNumber}</p>
+          )}
 
           <p>
             Your order is pending confirmation. Please follow the
@@ -695,7 +1270,9 @@ function HomePage() {
           <button
             type="button"
             className="button button-primary"
-            onClick={() => navigate("/", { replace: true, state: null })}
+            onClick={() =>
+              navigate("/", { replace: true, state: null })
+            }
           >
             Continue shopping
           </button>
@@ -780,7 +1357,6 @@ function HomePage() {
           margin-top: 26px;
         }
 
-        .vb-call-button,
         .vb-whatsapp-button {
           display: inline-flex;
           align-items: center;
@@ -790,15 +1366,6 @@ function HomePage() {
           border-radius: 9px;
           font-weight: 800;
           text-decoration: none;
-        }
-
-        .vb-call-button {
-          border: 1px solid rgba(255,255,255,.7);
-          color: #fff;
-          background: rgba(255,255,255,.1);
-        }
-
-        .vb-whatsapp-button {
           background: #25D366;
           color: #063d1d;
         }
@@ -854,9 +1421,6 @@ function HomePage() {
           right: 18px;
           bottom: 18px;
           z-index: 50;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
         }
 
         .vb-float-contact a {
@@ -876,16 +1440,44 @@ function HomePage() {
           color: #063d1d;
         }
 
-        .vb-float-call {
-          background: #f5c542;
-          color: #222;
+        .vb-search-row {
+          display: flex;
+          gap: 14px;
+          align-items: center;
+          flex-wrap: wrap;
+          margin: 25px 0;
         }
 
-        .vb-footer-call {
+        .vb-search-box {
+          flex: 1 1 280px;
           display: flex;
           align-items: center;
-          gap: 8px;
-          margin-top: 12px;
+          gap: 10px;
+          min-height: 48px;
+          padding: 0 15px;
+          border: 1px solid #ddd;
+          border-radius: 9px;
+          background: #fff;
+        }
+
+        .vb-search-box input {
+          flex: 1;
+          width: 100%;
+          min-width: 0;
+          border: 0;
+          outline: 0;
+          background: transparent;
+          font: inherit;
+        }
+
+        .vb-category-select {
+          flex: 0 1 260px;
+          min-height: 48px;
+          padding: 0 12px;
+          border: 1px solid #ddd;
+          border-radius: 9px;
+          background: #fff;
+          font: inherit;
         }
 
         @media (max-width: 640px) {
@@ -919,10 +1511,17 @@ function HomePage() {
             padding: 11px 13px;
             font-size: .86rem;
           }
+
+          .vb-search-row {
+            align-items: stretch;
+          }
+
+          .vb-category-select {
+            flex-basis: 100%;
+          }
         }
       `}</style>
 
-      {/* HERO SLIDER */}
       <section className="vb-slider" aria-label="Featured products">
         <div
           className="vb-slide-bg"
@@ -944,7 +1543,10 @@ function HomePage() {
             )
           }
         >
-          <ChevronRight size={22} style={{ transform: "rotate(180deg)" }} />
+          <ChevronRight
+            size={22}
+            style={{ transform: "rotate(180deg)" }}
+          />
         </button>
 
         <div className="container vb-slide-inner">
@@ -974,13 +1576,17 @@ function HomePage() {
                 className="vb-whatsapp-button"
               >
                 <WhatsAppIcon size={20} />
-                WhatsApp
+                WhatsApp us
               </a>
             </div>
 
             <div className="hero-trust">
-              <span><ShieldCheck size={18} /> Retail & wholesale</span>
-              <span><Truck size={18} /> Delivery available</span>
+              <span>
+                <ShieldCheck size={18} /> Retail & wholesale
+              </span>
+              <span>
+                <Truck size={18} /> Delivery available
+              </span>
             </div>
           </div>
         </div>
@@ -990,7 +1596,9 @@ function HomePage() {
           className="vb-slider-control vb-slider-next"
           aria-label="Next banner"
           onClick={() =>
-            setActiveSlide((current) => (current + 1) % heroSlides.length)
+            setActiveSlide(
+              (current) => (current + 1) % heroSlides.length
+            )
           }
         >
           <ChevronRight size={22} />
@@ -1012,7 +1620,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FLOATING CONTACT BUTTONS */}
       <div className="vb-float-contact" aria-label="Contact VoltBridge">
         <a
           className="vb-float-wa"
@@ -1028,40 +1635,60 @@ function HomePage() {
         </a>
       </div>
 
-      {/* PRODUCTS SECTION */}
+      {/* BENEFITS SECTION REMOVED */}
+
+      {saleProducts.length > 0 && (
+        <section className="container sale-section">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">SPECIAL OFFERS</span>
+              <h2>Products on sale</h2>
+            </div>
+          </div>
+
+          <div className="product-grid">
+            {saleProducts.slice(0, 4).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="container products-section" id="products">
         <div className="section-heading">
           <div>
             <span className="eyebrow">EXPLORE OUR STORE</span>
             <h2>Shop our products</h2>
-            <p>Find accessories for your everyday technology needs.</p>
+            <p>
+              Gaming consoles, Samsung chargers and adapters,
+              and Apple chargers and adapters.
+            </p>
           </div>
         </div>
 
-        <div className="product-toolbar">
-          <label className="product-search">
-            <Search size={19} />
+        <div className="vb-search-row">
+          <label className="vb-search-box">
+            <Search size={20} />
             <input
               type="search"
-              placeholder="Search products..."
+              placeholder="Search gaming consoles, Samsung or Apple products..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </label>
 
-          <label className="category-filter">
-            <span>Category</span>
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-            >
-              {CATEGORIES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </label>
+          <select
+            className="vb-category-select"
+            aria-label="Filter products by category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+          >
+            {CATEGORIES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
         </div>
 
         {loading ? (
@@ -1084,7 +1711,16 @@ function HomePage() {
           <div className="page-state">
             <Package size={32} />
             <h3>No products found</h3>
-            <p>Try a different search or category.</p>
+            <p>
+              Try another search or choose a different product category.
+            </p>
+            <button
+              type="button"
+              className="button button-secondary"
+              onClick={clearProductFilters}
+            >
+              Clear search and filters
+            </button>
           </div>
         ) : (
           <div className="product-grid">
@@ -1093,43 +1729,6 @@ function HomePage() {
             ))}
           </div>
         )}
-      </section>
-
-      {/* BENEFITS SECTION — AFTER ALL PRODUCTS */}
-      <section className="benefits-section" id="about">
-        <div className="container benefits-grid">
-          <article>
-            <ShieldCheck size={26} />
-            <div>
-              <h3>Quality accessories</h3>
-              <p>Products selected for everyday use.</p>
-            </div>
-          </article>
-
-          <article>
-            <Truck size={26} />
-            <div>
-              <h3>Delivery available</h3>
-              <p>Nairobi delivery and countrywide shipping.</p>
-            </div>
-          </article>
-
-          <article>
-            <WhatsAppIcon size={26} />
-            <div>
-              <h3>Easy enquiries</h3>
-              <p>Contact us directly through WhatsApp.</p>
-            </div>
-          </article>
-
-          <article>
-            <RefreshCw size={26} />
-            <div>
-              <h3>Availability updates</h3>
-              <p>Check whether a product is available before ordering.</p>
-            </div>
-          </article>
-        </div>
       </section>
     </>
   );
@@ -1245,7 +1844,7 @@ function ProductDetailPage() {
 
         <div className="product-detail-info">
           <span className="product-category">
-            {product.category || "Accessories"}
+            {product.category || "Products"}
           </span>
 
           <h1>{product.name}</h1>
@@ -1358,7 +1957,9 @@ function CartPage() {
                       <button
                         type="button"
                         aria-label="Increase quantity"
-                        disabled={!available || item.quantity >= quantityLimit}
+                        disabled={
+                          !available || item.quantity >= quantityLimit
+                        }
                         onClick={() => increaseQuantity(item.id)}
                       >
                         <Plus size={15} />
@@ -1432,7 +2033,10 @@ function CheckoutPage() {
   const [error, setError] = useState("");
 
   function update(field, value) {
-    setForm((current) => ({ ...current, [field]: value }));
+    setForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
   }
 
   async function handleSubmit(event) {
@@ -1520,7 +2124,10 @@ function CheckoutPage() {
 
       navigate("/", {
         replace: true,
-        state: { orderPlaced: true, orderNumber },
+        state: {
+          orderPlaced: true,
+          orderNumber,
+        },
       });
     } catch (err) {
       setError(
@@ -1563,7 +2170,9 @@ function CheckoutPage() {
             <input
               type="text"
               value={form.customerName}
-              onChange={(event) => update("customerName", event.target.value)}
+              onChange={(event) =>
+                update("customerName", event.target.value)
+              }
               required
               maxLength={160}
             />
@@ -1604,7 +2213,9 @@ function CheckoutPage() {
             Payment method *
             <select
               value={form.paymentMethod}
-              onChange={(event) => update("paymentMethod", event.target.value)}
+              onChange={(event) =>
+                update("paymentMethod", event.target.value)
+              }
               required
             >
               <option value="M-Pesa">M-Pesa</option>
@@ -1625,7 +2236,9 @@ function CheckoutPage() {
           </label>
 
           {error && (
-            <p className="form-error" role="alert">{error}</p>
+            <p className="form-error" role="alert">
+              {error}
+            </p>
           )}
 
           <button
@@ -1678,17 +2291,19 @@ function CheckoutPage() {
   );
 }
 
-/* ---------------- ROUTES ---------------- */
+/* ---------------- PAGE LAYOUT ---------------- */
 
-function PageLayout({ children }) {
+function StandardPage({ children }) {
   return (
     <>
       <Header />
-      {children}
+      <main>{children}</main>
       <Footer />
     </>
   );
 }
+
+/* ---------------- ROUTES ---------------- */
 
 function AppRoutes() {
   return (
@@ -1698,77 +2313,109 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          <PageLayout>
+          <StandardPage>
             <HomePage />
-          </PageLayout>
+          </StandardPage>
         }
       />
 
       <Route
         path="/product/:productId"
         element={
-          <PageLayout>
+          <StandardPage>
             <ProductDetailPage />
-          </PageLayout>
+          </StandardPage>
         }
       />
 
       <Route
         path="/cart"
         element={
-          <PageLayout>
+          <StandardPage>
             <CartPage />
-          </PageLayout>
+          </StandardPage>
         }
       />
 
       <Route
         path="/checkout"
         element={
-          <PageLayout>
+          <StandardPage>
             <CheckoutPage />
-          </PageLayout>
+          </StandardPage>
         }
       />
 
       <Route
         path="/about"
-        element={<PageLayout><About /></PageLayout>}
+        element={
+          <StandardPage>
+            <About />
+          </StandardPage>
+        }
       />
 
       <Route
         path="/contact"
-        element={<PageLayout><Contact /></PageLayout>}
-      />
-
-      <Route
-        path="/service-center"
-        element={<PageLayout><ServiceCenter /></PageLayout>}
-      />
-
-      <Route
-        path="/privacy-policy"
-        element={<PageLayout><PrivacyPolicy /></PageLayout>}
-      />
-
-      <Route
-        path="/extended-warranty"
-        element={<PageLayout><ExtendedWarranty /></PageLayout>}
-      />
-
-      <Route
-        path="/terms-and-conditions"
-        element={<PageLayout><TermsAndConditions /></PageLayout>}
-      />
-
-      <Route
-        path="/shipping-and-return-policy"
-        element={<PageLayout><ShippingReturns /></PageLayout>}
+        element={
+          <StandardPage>
+            <Contact />
+          </StandardPage>
+        }
       />
 
       <Route
         path="/faqs"
-        element={<PageLayout><FAQs /></PageLayout>}
+        element={
+          <StandardPage>
+            <FAQs />
+          </StandardPage>
+        }
+      />
+
+      <Route
+        path="/shipping-returns"
+        element={
+          <StandardPage>
+            <ShippingReturns />
+          </StandardPage>
+        }
+      />
+
+      <Route
+        path="/privacy-policy"
+        element={
+          <StandardPage>
+            <PrivacyPolicy />
+          </StandardPage>
+        }
+      />
+
+      <Route
+        path="/terms-and-conditions"
+        element={
+          <StandardPage>
+            <TermsAndConditions />
+          </StandardPage>
+        }
+      />
+
+      <Route
+        path="/service-center"
+        element={
+          <StandardPage>
+            <ServiceCenter />
+          </StandardPage>
+        }
+      />
+
+      <Route
+        path="/extended-warranty"
+        element={
+          <StandardPage>
+            <ExtendedWarranty />
+          </StandardPage>
+        }
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />
