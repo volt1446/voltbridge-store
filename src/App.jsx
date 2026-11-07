@@ -1,3 +1,4 @@
+
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ExtendedWarranty from "./pages/ExtendedWarranty";
@@ -212,21 +213,6 @@ function getStoreCategory(product) {
 }
 
 /* ---------------- FEATURED HOMEPAGE PRODUCTS ---------------- */
-
-/*
-  The homepage slider uses actual product images from Supabase.
-
-  J36:
-  Looks for J36 or J36 Ultra in the product name.
-
-  Samsung:
-  Looks for Samsung charger and adapter products.
-
-  Apple:
-  Looks for Apple charger and adapter products.
-
-  If a matching product or image is missing, the placeholder is used.
-*/
 
 function getFeaturedJ36(products) {
   return products.find((product) => {
@@ -502,8 +488,6 @@ function Header() {
     <header className="site-header vb-site-header">
       <div className="container vb-header-inner">
 
-        {/* LEFT: MENU */}
-
         <div className="vb-menu-wrapper">
           <button
             type="button"
@@ -607,8 +591,6 @@ function Header() {
           )}
         </div>
 
-        {/* LOGO */}
-
         <Link to="/" className="brand vb-header-brand">
           <span className="brand-icon">
             <Package size={25} />
@@ -619,8 +601,6 @@ function Header() {
             <small>TECHNOLOGIES</small>
           </span>
         </Link>
-
-        {/* CENTRE: SEARCH BAR */}
 
         <form
           className="vb-header-search"
@@ -655,8 +635,6 @@ function Header() {
             <span>Search</span>
           </button>
         </form>
-
-        {/* RIGHT: WHATSAPP AND CART */}
 
         <div className="vb-header-actions">
           <a
@@ -1118,11 +1096,6 @@ function HomePage() {
     setCategory(params.get("category") || "All Products");
   }, [location.search]);
 
-  /*
-    Find the actual products in the Supabase catalogue.
-    These images automatically appear after products load.
-  */
-
   const j36Product = useMemo(
     () => getFeaturedJ36(products),
     [products]
@@ -1357,19 +1330,6 @@ function HomePage() {
           margin-top: 26px;
         }
 
-        .vb-whatsapp-button {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 9px;
-          padding: 12px 18px;
-          border-radius: 9px;
-          font-weight: 800;
-          text-decoration: none;
-          background: #25D366;
-          color: #063d1d;
-        }
-
         .vb-slider-control {
           position: absolute;
           top: 50%;
@@ -1562,21 +1522,11 @@ function HomePage() {
 
             <p>{heroSlides[activeSlide].description}</p>
 
+            {/* ONLY SHOP NOW BUTTON REMAINS IN THE SLIDER */}
+
             <div className="vb-slide-actions">
               <a href="#products" className="button button-primary">
                 Shop now <ArrowRight size={18} />
-              </a>
-
-              <a
-                href={makeWhatsAppUrl(
-                  "Hello VoltBridge Technologies. I would like to enquire about your products."
-                )}
-                target="_blank"
-                rel="noreferrer"
-                className="vb-whatsapp-button"
-              >
-                <WhatsAppIcon size={20} />
-                WhatsApp us
               </a>
             </div>
 
